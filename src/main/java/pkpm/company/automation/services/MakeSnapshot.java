@@ -21,7 +21,7 @@ public class MakeSnapshot {
     ExelReader.read(fileName);
     this.bs.setNumOfSheets(ExelReader.getSheets().size());
     this.bs.setSheetsNames(getSheetsNames());
-    this.bs.setColumnsOfBook(getColumns());
+    this.bs.setColumnsOfBook(getColumnsOfBook());
   }
 
   private List<String> getSheetsNames() {
@@ -30,7 +30,7 @@ public class MakeSnapshot {
         .collect(Collectors.toList());
   }
 
-  private Map<String, List<List<Cell>>> getColumns() {
+  private Map<String, List<List<Cell>>> getColumnsOfBook() {
     Map<String, List<List<Cell>>> sheetData = ExelReader.getSheets().stream()
         .collect(Collectors.toMap(
             sheet -> sheet.getSheetName(), // Ключ: назва листа
@@ -61,7 +61,7 @@ public class MakeSnapshot {
     return sheetData;
   }
 
-  public List<Cell> getColumn(String sheetName, int columnNum) {
+  public List<Cell> getColumnOfSheet(String sheetName, int columnNum) {
     return this.bs.getColumnsOfBook().get(sheetName).get(columnNum);
   }
 }
