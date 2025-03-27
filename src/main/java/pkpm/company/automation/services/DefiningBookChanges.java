@@ -1,6 +1,7 @@
 package pkpm.company.automation.services;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
@@ -22,8 +23,8 @@ public class DefiningBookChanges { // Визначення змін в книз�
    * @return
    */
   public List<String> getBookChanges() {
-    List<String> bookSheetsNames1 = ms1.getBs().getSheetsNames();
-    List<String> bookSheetsNames2 = ms2.getBs().getSheetsNames();
+    Set<String> bookSheetsNames1 = ms1.getBs().getSheetsNames();
+    Set<String> bookSheetsNames2 = ms2.getBs().getSheetsNames();
     if(bookSheetsNames1.size() < bookSheetsNames2.size()){
       return getListOfDifferentSheets(bookSheetsNames1, bookSheetsNames2);
     }
@@ -41,8 +42,8 @@ public class DefiningBookChanges { // Визначення змін в книз�
    * @param bookSheetsNames2
    * @return
    */
-  private List<String> getListOfDifferentSheets(List<String> bookSheetsNames1,
-      List<String> bookSheetsNames2) {
+  private List<String> getListOfDifferentSheets(Set<String> bookSheetsNames1,
+      Set<String> bookSheetsNames2) {
     return Stream.concat(
         bookSheetsNames1.stream().filter(e -> !bookSheetsNames2.contains(e)),
         bookSheetsNames2.stream().filter(e -> !bookSheetsNames1.contains(e))

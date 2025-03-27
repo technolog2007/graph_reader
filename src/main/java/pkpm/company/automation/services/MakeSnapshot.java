@@ -1,8 +1,11 @@
 package pkpm.company.automation.services;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -12,26 +15,34 @@ import org.apache.poi.ss.usermodel.Sheet;
 import pkpm.company.automation.models.BookSnapshot;
 
 @Slf4j
+@Getter
 public class MakeSnapshot {
 
-  @Getter
   private BookSnapshot bs = new BookSnapshot();
 
   public MakeSnapshot(String fileName) {
-    ExelReader.read(fileName);
-    this.bs.setNumOfSheets(ExelReader.getSheets().size());
+    readFile(fileName);
+    this.bs.setDate(ExelReader.getBookDate());
+    this.bs.setNumOfSheets(ExelReader.getBook().size());
     this.bs.setSheetsNames(getSheetsNames());
     this.bs.setColumnsOfBook(getColumnsOfBook());
   }
 
-  private List<String> getSheetsNames() {
-    return ExelReader.getSheets().stream()
+  private void readFile(String fileName) {
+    if (!ExelReader.getBook().isEmpty()) {
+      ExelReader.clear();
+    }
+    ExelReader.read(fileName);
+  }
+
+  private Set<String> getSheetsNames() {
+    return ExelReader.getBook().stream()
         .map(Sheet::getSheetName)
-        .collect(Collectors.toList());
+        .collect(Collectors.toSet());
   }
 
   private Map<String, List<List<Cell>>> getColumnsOfBook() {
-    Map<String, List<List<Cell>>> sheetData = ExelReader.getSheets().stream()
+    Map<String, List<List<Cell>>> sheetData = ExelReader.getBook().stream()
         .collect(Collectors.toMap(
             sheet -> sheet.getSheetName(), // Ключ: назва листа
             sheet -> {
