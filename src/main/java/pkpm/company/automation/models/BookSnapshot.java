@@ -7,6 +7,7 @@ import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.usermodel.Cell;
 
 @Slf4j
 public class BookSnapshot {
@@ -14,27 +15,26 @@ public class BookSnapshot {
   @Getter
   @Setter
   private int numOfSheets;
-
   @Getter
   @Setter
-  private List<String> sheetNames = new ArrayList<>();
+  private List<String> sheetsNames = new ArrayList<>();
   @Getter
   @Setter
-  private Map<String,List<String>> cellsOfSheet = new HashMap<>();
+  private Map<String, List<List<Cell>>> columnsOfBook = new HashMap<>();
 
   public BookSnapshot() {
   }
 
-  public BookSnapshot(int numOfSheets, List<String> sheetNames) {
+  public BookSnapshot(int numOfSheets, List<String> sheetsNames) {
     this.numOfSheets = numOfSheets;
-    this.sheetNames = sheetNames;
+    this.sheetsNames = sheetsNames;
   }
 
   @Override
   public String toString() {
     return "BookSnapshot{" +
         "numOfSheets=" + numOfSheets +
-        ", sheetNames=" + sheetNames +
+        ", sheetsNames=" + sheetsNames +
         '}';
   }
 }
