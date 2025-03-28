@@ -12,8 +12,8 @@ import pkpm.company.automation.services.ScheduleExecution;
 public class App {
 
   private static final String FILE_NAME = System.getenv("file_name");
-  private static final String FILE_NAME2 = System.getenv("file_name2");
-  private static LocalDateTime END_TIME = LocalDateTime.of(2025, 03, 27, 23, 55);
+//  private static final String FILE_NAME2 = System.getenv("file_name2");
+  private static LocalDateTime END_TIME = LocalDateTime.of(2025, 03, 28, 17,0);
 
 
   public static void main(String[] args) {
@@ -21,13 +21,7 @@ public class App {
     log.info("Start program time is : " + new Date());
 
     ScheduleExecution se = new ScheduleExecution();
-    se.execute(FILE_NAME, 20, END_TIME); // час інтервалу в сек
-//    MakeSnapshot ms1 = new MakeSnapshot(FILE_NAME);
-//    log.info(ms1.getBs().toString());
-//    MakeSnapshot ms2 = new MakeSnapshot(FILE_NAME2);
-//    log.info(ms2.getBs().toString());
-//    DefiningBookChanges dbc = new DefiningBookChanges(ms1, ms2);
-//    log.info(dbc.getBookChanges().toString());
+    se.execute(FILE_NAME, 10, END_TIME); // час інтервалу в сек
 
     log.info("End program time is : " + new Date());
   }
