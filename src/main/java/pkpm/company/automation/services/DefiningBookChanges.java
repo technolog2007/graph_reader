@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -57,33 +56,33 @@ public class DefiningBookChanges { // Визначення змін в книз�
     ).collect(Collectors.toList());
   }
 
-  private void getSheetsChanges(BookSnapshot bs1, BookSnapshot bs2) {
+  /**
+   * Даний метод повинен працювати при умові що обидва знімки з книги мають однакові вкладки
+   * @param bs1
+   * @param bs2
+   */
+  public void getSheetsChanges(BookSnapshot bs1, BookSnapshot bs2) {
     Map<String, List<Cell>> filteredColumns1 = extractSecondColumn(bs1.getColumnsOfBook(),
         bs1.getSheetsNames());
     Map<String, List<Cell>> filteredColumns2 = extractSecondColumn(bs2.getColumnsOfBook(),
         bs2.getSheetsNames());
-  }
-
-  public Map<String, List<Cell>> extractSecondColumn(Map<String, List<List<Cell>>> columnsOfBook,
-      Set<String> sheetsName) {
-    Map<String, List<Cell>> result = new HashMap<>();
-
-    for (String sheet : sheetsName) {
-      List<List<Cell>> columns = columnsOfBook.get(sheet);
-      if (columns != null && columns.size() > 1) { // Перевіряємо, що є хоча б 2 колонки
-        List<Cell> filtCol = deleteNullValue(columns.get(1));
-        log.info("{} : {}\n, size is {}\n", sheet, filtCol, filtCol.size());
-        result.put(sheet, filtCol); // Додаємо другу колонку (індекс 1)
+    Map<String, List<Cell>> result = findDifferentCells(filteredColumns1, filteredColumns2, bs2.getSheetsNames());
+    if(result != null && !result.isEmpty()){
+      for (String sheet : bs1.getSheetsNames()){
+        if(result.containsKey(sheet)){
+          log.info("Додані нові позиції на вкладку : {}", result.get(sheet));
+        }
       }
     }
-    return result;
   }
 
-  private List<Cell> deleteNullValue(List<Cell> column) {
-    column.removeIf(cell -> cell == null || cell.toString().equals(" "));
-    return column;
-  }
-
+  /**
+   * Метод приймає книгу з відфільтрованою 2-ю колонкою, і повертає книгу лише зі змінами.
+   * @param book1
+   * @param book2
+   * @param sheetsName
+   * @return
+   */
   public Map<String, List<Cell>> findDifferentCells(Map<String, List<Cell>> book1,
       Map<String, List<Cell>> book2, Set<String> sheetsName) {
 
@@ -113,6 +112,26 @@ public class DefiningBookChanges { // Визначення змін в книз�
       }
     }
     return differences;
+  }
+
+  public Map<String, List<Cell>> extractSecondColumn(Map<String, List<List<Cell>>> columnsOfBook,
+      Set<String> sheetsName) {
+    Map<String, List<Cell>> result = new HashMap<>();
+
+    for (String sheet : sheetsName) {
+      List<List<Cell>> columns = columnsOfBook.get(sheet);
+      if (columns != null && columns.size() > 1) { // Перевіряємо, що є хоча б 2 колонки
+        List<Cell> filtCol = deleteNullValue(columns.get(1));
+        log.info("{} : {}\n, size is {}\n", sheet, filtCol, filtCol.size());
+        result.put(sheet, filtCol); // Додаємо другу колонку (індекс 1)
+      }
+    }
+    return result;
+  }
+
+  private List<Cell> deleteNullValue(List<Cell> column) {
+    column.removeIf(cell -> cell == null || cell.toString().equals(" "));
+    return column;
   }
 }
 

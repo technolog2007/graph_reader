@@ -1,13 +1,10 @@
 package pkpm.company.automation.services;
 
 import java.io.File;
-import java.io.IOException;
-import java.sql.Time;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Timer;
 import java.util.concurrent.TimeUnit;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +31,18 @@ public class ScheduleExecution {
       pause(pauseTime);
       currentTime = LocalDateTime.now();
     }
+  }
+
+  private void definingSheetChange(List<BookSnapshot> bsl){
+    // умови:
+    // 1. якщо List<BookSnapshot> містить більше ніж 1 елемент;
+    if(bsl.size()>1){
+
+    }
+
+    // 2. якщо ці елементи мають однакову кількість сторінок;
+    // 3. якщо ці сторінки мають однакові назви;
+    // виконати DefiningBookChanges dbc.getSheetsChanges(BookSnapshot bs1, BookSnapshot bs2)
   }
 
   private void definingBookChange(List<BookSnapshot> bsl) {
