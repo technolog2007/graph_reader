@@ -20,8 +20,9 @@ public class ScheduleExecution {
 
   public void execute(String fileName, long pauseTime, LocalDateTime endTime) {
     LocalDateTime currentTime = LocalDateTime.now();
+    save(bsl, new MakeSnapshot(fileName));
     while (currentTime.isBefore(endTime)) {
-      if (checkBookDate(setDBookDate(fileName))) {
+      if (checkBookDate(setDBookDate(fileName))) { // перевірка, чи була змінена книга
         MakeSnapshot ms = new MakeSnapshot(fileName);
         save(bsl, ms);
         definingBookChange(bsl);
@@ -33,31 +34,28 @@ public class ScheduleExecution {
     }
   }
 
-  private void definingSheetChange(List<BookSnapshot> bsl){
-    // умови:
-    // 1. якщо List<BookSnapshot> містить більше ніж 1 елемент;
-    if(bsl.size()>1){
-
-    }
-
-    // 2. якщо ці елементи мають однакову кількість сторінок;
-    // 3. якщо ці сторінки мають однакові назви;
-    // виконати DefiningBookChanges dbc.getSheetsChanges(BookSnapshot bs1, BookSnapshot bs2)
-  }
-
   private void definingBookChange(List<BookSnapshot> bsl) {
     if (bsl.size() == 2) {
       DefiningBookChanges dbc = new DefiningBookChanges(bsl.get(0), bsl.get(1));
-      if (dbc.getBookChanges() != null && !dbc.getBookChanges().isEmpty()) {
+      if (dbc.getBookChanges() != null) {
         if(dbc.getBookChanges().size() == 1) {
           log.warn("Додано нову вкладку : " + dbc.getBookChanges().toString());
-        }else{
+        }else if (dbc.getBookChanges().size() > 1){
           log.warn("Додано нові вкладки : " + dbc.getBookChanges().toString());
+        } else if (dbc.getBookChanges().isEmpty()){
+          dbc.getSheetsChanges(bsl.get(0), bsl.get(1));
+          log.warn("Треба перевірити чи були додані нові позиції у вкладки!!!");
         }
       }
     }
   }
 
+  /**
+   * Визначає останню дату книги та повертає список з датами книг
+   *
+   * @param fileName
+   * @return
+   */
   private List<Date> setDBookDate(String fileName) {
     if (bookDateList.isEmpty()) {
       bookDateList.add(new Date(new File(fileName).lastModified()));
