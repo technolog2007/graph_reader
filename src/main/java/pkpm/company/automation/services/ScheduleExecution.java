@@ -5,9 +5,11 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.usermodel.Cell;
 import pkpm.company.automation.models.BookSnapshot;
 
 @Slf4j
@@ -37,14 +39,23 @@ public class ScheduleExecution {
     if (bsl.size() == 2) {
       DefiningBookChanges dbc = new DefiningBookChanges(bsl.get(0), bsl.get(1));
       if (dbc.getBookChanges() != null) {
-        if(dbc.getBookChanges().size() == 1) {
+        if (dbc.getBookChanges().size() == 1) {
           log.warn("Додано нову вкладку : " + dbc.getBookChanges().toString());
-        }else if (dbc.getBookChanges().size() > 1){
+        } else if (dbc.getBookChanges().size() > 1) {
           log.warn("Додано нові вкладки : " + dbc.getBookChanges().toString());
-        } else if (dbc.getBookChanges().isEmpty()){
-          dbc.getSheetsChanges(bsl.get(0), bsl.get(1));
+        } else if (dbc.getBookChanges().isEmpty()) {
+          Map<String, List<Cell>> changes = dbc.getSheetsChanges(bsl.get(0), bsl.get(1));
+          printChanges(changes);
         }
       }
+    }
+  }
+
+  private void printChanges(Map<String, List<Cell>> changes) {
+    if (changes.isEmpty()) {
+      log.info("Відсутні зміни в графіку!");
+    } else {
+      log.info("Додано нові позиції : {}", changes);
     }
   }
 

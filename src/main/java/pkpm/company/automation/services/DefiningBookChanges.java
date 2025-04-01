@@ -59,14 +59,14 @@ public class DefiningBookChanges { // Визначення змін в книз�
    * @param bs1
    * @param bs2
    */
-  public void getSheetsChanges(BookSnapshot bs1, BookSnapshot bs2) {
+  public Map<String, List<Cell>> getSheetsChanges(BookSnapshot bs1, BookSnapshot bs2) {
     Map<String, List<Cell>> filteredColumns1 = extractSecondColumn(bs1.getColumnsOfBook(),
         bs1.getSheetsNames());
     Map<String, List<Cell>> filteredColumns2 = extractSecondColumn(bs2.getColumnsOfBook(),
         bs2.getSheetsNames());
     Map<String, List<Cell>> result = findDifferentCells(filteredColumns1, filteredColumns2,
         bs1.getSheetsNames());
-        log.info("Додано нові позиції : {}", result);
+    return result;
   }
 
   public Map<String, List<Cell>> extractSecondColumn(Map<String, List<List<Cell>>> columnsOfBook,
