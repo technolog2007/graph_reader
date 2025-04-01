@@ -9,8 +9,7 @@ import pkpm.company.automation.services.ScheduleExecution;
 public class App {
 
   private static final String FILE_NAME = System.getenv("file_name");
-//  private static final String FILE_NAME2 = System.getenv("file_name2");
-  private static LocalDateTime END_TIME = LocalDateTime.of(2025, 03, 31, 23,50);
+  private static LocalDateTime END_TIME = LocalDateTime.of(2025, 04, 01, 23,50);
 
 
   public static void main(String[] args) {

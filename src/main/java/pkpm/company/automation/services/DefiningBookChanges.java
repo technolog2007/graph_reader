@@ -37,9 +37,6 @@ public class DefiningBookChanges { // Визначення змін в книз�
     return null;
   }
 
-  private int determiningMatches() { //визначення збігів
-    return 0;
-  }
 
   /**
    * Метод порівнює два переліка сторінок графіка і повертає список імен що відрізняються
@@ -67,7 +64,6 @@ public class DefiningBookChanges { // Визначення змін в книз�
         bs1.getSheetsNames());
     Map<String, List<Cell>> filteredColumns2 = extractSecondColumn(bs2.getColumnsOfBook(),
         bs2.getSheetsNames());
-    log.info("size 1 is {}, size 2 is {}", filteredColumns1.size(), filteredColumns2.size());
     Map<String, List<Cell>> result = findDifferentCells(filteredColumns1, filteredColumns2,
         bs1.getSheetsNames());
         log.info("Додано нові позиції : {}", result);
@@ -81,11 +77,10 @@ public class DefiningBookChanges { // Визначення змін в книз�
       List<List<Cell>> columns = columnsOfBook.get(sheet);
       if (columns != null && columns.size() > 1) { // Перевіряємо, що є хоча б 2 колонки
         List<Cell> filtCol = deleteNullValue(columns.get(1));
-//        log.info("{} : {}\n, size is {}\n", sheet, filtCol, filtCol.size());
         result.put(sheet, filtCol);
       }
     }
-    log.info("{} ", result);
+    log.info("Extract second column size is : {}", result.size());
     return result;
   }
 
@@ -112,19 +107,16 @@ public class DefiningBookChanges { // Визначення змін в книз�
       List<Cell> col2 = book2.get(sheet);
 
       if (col1 == null || col2 == null) {
-        continue; // Пропускаємо, якщо у якогось файлу відсутній цей лист
+        continue;
       }
 
       List<Cell> diffCells = new ArrayList<>();
-      int minSize = Math.min(col1.size(), col2.size());
+      int minSize = col1.size();
+      int maxSize = col2.size();
+      int difSize = maxSize - minSize;
 
-      for (int i = 0; i < minSize; i++) {
-        Cell value1 = col1.get(i);
-        Cell value2 = col2.get(i);
-
-        if (!value1.equals(value2)) {
-          diffCells.add(col2.get(i)); // Додаємо комірку, яка змінилася
-        }
+      for (int i = maxSize-difSize; i < maxSize; i++) {
+        diffCells.add(col2.get(i));
       }
       if (!diffCells.isEmpty()) {
         differences.put(sheet, diffCells);

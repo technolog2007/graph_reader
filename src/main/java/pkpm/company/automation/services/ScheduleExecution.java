@@ -26,7 +26,6 @@ public class ScheduleExecution {
         MakeSnapshot ms = new MakeSnapshot(fileName);
         save(bsl, ms);
         definingBookChange(bsl);
-        log.info(ms.getBs().toString());
       }
       log.info("There are no changes in book!");
       pause(pauseTime);
@@ -44,7 +43,6 @@ public class ScheduleExecution {
           log.warn("Додано нові вкладки : " + dbc.getBookChanges().toString());
         } else if (dbc.getBookChanges().isEmpty()){
           dbc.getSheetsChanges(bsl.get(0), bsl.get(1));
-          log.warn("Треба перевірити чи були додані нові позиції у вкладки!!!");
         }
       }
     }
