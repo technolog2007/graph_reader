@@ -3,7 +3,6 @@ package pkpm.company.automation.app;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
-import java.util.Date;
 import lombok.extern.slf4j.Slf4j;
 import pkpm.company.automation.services.ScheduleExecution;
 
