@@ -12,7 +12,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import pkpm.company.automation.models.BookSnapshot;
 
 @Slf4j
-public class DefiningBookChanges { // Визначення змін в книзі
+public class DefiningBookChanges {
 
   BookSnapshot bs1;
   BookSnapshot bs2;
@@ -69,10 +69,9 @@ public class DefiningBookChanges { // Визначення змін в книз�
     return result;
   }
 
-  public Map<String, List<Cell>> extractSecondColumn(Map<String, List<List<Cell>>> columnsOfBook,
+  private Map<String, List<Cell>> extractSecondColumn(Map<String, List<List<Cell>>> columnsOfBook,
       Set<String> sheetsName) {
     Map<String, List<Cell>> result = new HashMap<>();
-
     for (String sheet : sheetsName) {
       List<List<Cell>> columns = columnsOfBook.get(sheet);
       if (columns != null && columns.size() > 1) { // Перевіряємо, що є хоча б 2 колонки
@@ -80,7 +79,6 @@ public class DefiningBookChanges { // Визначення змін в книз�
         result.put(sheet, filtCol);
       }
     }
-    log.info("Extract second column size is : {}", result.size());
     return result;
   }
 
@@ -97,7 +95,7 @@ public class DefiningBookChanges { // Визначення змін в книз�
    * @param sheetsName
    * @return
    */
-  public Map<String, List<Cell>> findDifferentCells(Map<String, List<Cell>> book1,
+  private Map<String, List<Cell>> findDifferentCells(Map<String, List<Cell>> book1,
       Map<String, List<Cell>> book2, Set<String> sheetsName) {
 
     Map<String, List<Cell>> differences = new HashMap<>();

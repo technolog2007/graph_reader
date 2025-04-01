@@ -13,26 +13,30 @@ import org.apache.poi.ss.usermodel.Cell;
 import pkpm.company.automation.models.BookSnapshot;
 
 @Slf4j
-public class ScheduleExecution {
+@Getter
+public class GraphScanner {
 
-  @Getter
-  private List<BookSnapshot> bsl = new ArrayList<>();
-  @Getter
-  private List<Date> bookDateList = new ArrayList<>();
+  private final List<BookSnapshot> snapshotList = new ArrayList<>(2);
+  private final List<Date> dateList = new ArrayList<>();
+  private LocalDateTime currentTime = LocalDateTime.now();
 
-  public void execute(String fileName, long pauseTime, LocalDateTime endTime) {
-    LocalDateTime currentTime = LocalDateTime.now();
-    save(bsl, new MakeSnapshot(fileName));
+  public void scanning(String fileName, long pauseTime, LocalDateTime endTime) {
+    save(snapshotList, new MakeSnapshot(fileName));
     while (currentTime.isBefore(endTime)) {
-      if (checkBookDate(setDBookDate(fileName))) { // перевірка, чи була змінена книга
-        MakeSnapshot ms = new MakeSnapshot(fileName);
-        save(bsl, ms);
-        definingBookChange(bsl);
+      if (checkBookDate(setBookDate(fileName))) { // перевірка, чи була змінена книга
+        save(snapshotList, new MakeSnapshot(fileName));
+        definingBookChange(snapshotList);
+        update(pauseTime);
+      } else {
+        log.info("There are no changes in book!");
+        update(pauseTime);
       }
-      log.info("There are no changes in book!");
-      pause(pauseTime);
-      currentTime = LocalDateTime.now();
     }
+  }
+
+  private void update(long pauseTime) {
+    pause(pauseTime);
+    this.currentTime = LocalDateTime.now();
   }
 
   private void definingBookChange(List<BookSnapshot> bsl) {
@@ -62,20 +66,20 @@ public class ScheduleExecution {
   /**
    * Визначає останню дату книги та повертає список з датами книг
    *
-   * @param fileName
-   * @return
+   * @param fileName -
+   * @return -
    */
-  private List<Date> setDBookDate(String fileName) {
-    if (bookDateList.isEmpty()) {
-      bookDateList.add(new Date(new File(fileName).lastModified()));
-      return bookDateList;
-    } else if (bookDateList.size() == 1) {
-      bookDateList.add(new Date(new File(fileName).lastModified()));
-      return bookDateList;
+  private List<Date> setBookDate(String fileName) {
+    if (dateList.isEmpty()) {
+      dateList.add(new Date(new File(fileName).lastModified()));
+      return dateList;
+    } else if (dateList.size() == 1) {
+      dateList.add(new Date(new File(fileName).lastModified()));
+      return dateList;
     } else {
-      bookDateList.set(0, bookDateList.get(1));
-      bookDateList.set(1, new Date(new File(fileName).lastModified()));
-      return bookDateList;
+      dateList.set(0, dateList.get(1));
+      dateList.set(1, new Date(new File(fileName).lastModified()));
+      return dateList;
     }
   }
 
@@ -98,9 +102,9 @@ public class ScheduleExecution {
     }
   }
 
-  private void pause(long min) {
+  private void pause(long seconds) {
     try {
-      TimeUnit.SECONDS.sleep(min);
+      TimeUnit.SECONDS.sleep(seconds);
     } catch (InterruptedException e) {
       throw new RuntimeException(e);
     }
