@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import pkpm.company.automation.models.BookSnapshot;
+import pkpm.company.automation.utils.MessageWriter;
 
 @Slf4j
 @Getter
@@ -44,15 +45,34 @@ public class GraphScanner {
       DefiningBookChanges dbc = new DefiningBookChanges(bsl.get(0), bsl.get(1));
       if (dbc.getBookChanges() != null) {
         if (dbc.getBookChanges().size() == 1) {
-          log.warn("Додано нову вкладку : " + dbc.getBookChanges().toString());
+          log.warn("\uD83D\uDCC2➕Додано нову вкладку \"" + dbc.getBookChanges().get(0) + "\"");
+          MessageWriter.writeLine(
+              "\uD83D\uDCC2➕Додано нову вкладку \"" + dbc.getBookChanges().get(0) + "\"");
         } else if (dbc.getBookChanges().size() > 1) {
-          log.warn("Додано нові вкладки : " + dbc.getBookChanges().toString());
+          log.warn(
+              "\uD83D\uDCC2\uD83D\uDCC2➕Додано нові вкладки \"" + dbc.getBookChanges().toString()
+                  + "\"");
+          MessageWriter.writeList(createMessageToPrint(dbc.getBookChanges()));
         } else if (dbc.getBookChanges().isEmpty()) {
           Map<String, List<Cell>> changes = dbc.getSheetsChanges(bsl.get(0), bsl.get(1));
           printChanges(changes);
         }
       }
     }
+  }
+
+  private List<String> createMessageToPrint(List<String> bookChanges) {
+    List<String> messages = new ArrayList<>();
+    String result = "";
+    for (int i = 0; i < bookChanges.size(); i++) {
+      if (i < bookChanges.size() - 1) {
+        result += bookChanges.get(i) + ", ";
+      } else {
+        result += "" + bookChanges.get(i);
+      }
+    }
+    messages.add("\uD83D\uDCC2\uD83D\uDCC2➕Додано нові вкладки: \"" + result + "\"");
+    return messages;
   }
 
   private void printChanges(Map<String, List<Cell>> changes) {

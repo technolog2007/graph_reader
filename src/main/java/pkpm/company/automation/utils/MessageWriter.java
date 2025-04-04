@@ -9,13 +9,21 @@ public class MessageWriter {
 
   private static final String FILE_NAME = "output.txt";
 
-  public static void write(List<String> messages) {
-    try (FileWriter fw = new FileWriter(new File(FILE_NAME))) {
+  public static void writeList(List<String> messages) {
+    try (FileWriter fw = new FileWriter(FILE_NAME, true)) {
 
       for (String mes : messages) {
         fw.write(mes + "\n");
       }
 
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  public static void writeLine(String message) {
+    try (FileWriter fw = new FileWriter(FILE_NAME, true)) {
+      fw.write(message + "\n");
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
