@@ -104,7 +104,7 @@ public class GraphScanner {
 
   private void pause(long seconds) {
     try {
-      TimeUnit.SECONDS.sleep(seconds);
+      Thread.sleep(seconds * 1000);
     } catch (InterruptedException e) {
       throw new RuntimeException(e);
     }

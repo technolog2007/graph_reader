@@ -10,7 +10,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import pkpm.company.automation.models.BookSnapshot;
+import pkpm.company.automation.utils.ExelReader;
 
 @Slf4j
 @Getter
@@ -19,28 +21,21 @@ public class MakeSnapshot {
   private final BookSnapshot bs = new BookSnapshot();
 
   public MakeSnapshot(String fileName) {
-    readFile(fileName);
+    ExelReader.read(fileName);
     this.bs.setDate(ExelReader.getBookDate());
-    this.bs.setNumOfSheets(ExelReader.getBook().size());
+    this.bs.setNumOfSheets(ExelReader.getSheets().size());
     this.bs.setSheetsNames(getSheetsNames());
     this.bs.setColumnsOfBook(getColumnsOfBook());
   }
 
-  private void readFile(String fileName) {
-    if (!ExelReader.getBook().isEmpty()) {
-      ExelReader.clear();
-    }
-    ExelReader.read(fileName);
-  }
-
   private Set<String> getSheetsNames() {
-    return ExelReader.getBook().stream()
+    return ExelReader.getSheets().stream()
         .map(Sheet::getSheetName)
         .collect(Collectors.toSet());
   }
 
   private Map<String, List<List<Cell>>> getColumnsOfBook() {
-    return ExelReader.getBook().stream()
+    return ExelReader.getSheets().stream()
         .collect(Collectors.toMap(
             sheet -> sheet.getSheetName(), // Key is letter name
             sheet -> {

@@ -34,9 +34,10 @@ build/
 # Ігноруємо файли конфігів, які не хочеш шарити
 app.properties
 task.txt
-from.env
+config/from.env
 todo.txt
 Graph1.xlsx
 Graph2.xlsx
 TestApp.java
+График выдачи докуметации.xlsx
 Використання черги повідомлень.txt
