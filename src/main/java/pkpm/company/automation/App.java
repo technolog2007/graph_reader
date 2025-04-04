@@ -1,4 +1,4 @@
-package pkpm.company.automation.app;
+package pkpm.company.automation;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

@@ -68,7 +68,7 @@
               <archive>
                 <manifest>
                   <addClasspath>true</addClasspath>
-                  <mainClass>pkpm.company.automation.app.App</mainClass>
+                  <mainClass>pkpm.company.automation.App</mainClass>
                   <classpathPrefix>lib/</classpathPrefix>
                 </manifest>
                 <manifestEntries>
@@ -103,7 +103,7 @@
               </formats>
               <archive>
                 <manifest>
-                  <mainClass>pkpm.company.automation.app.App</mainClass>
+                  <mainClass>pkpm.company.automation.App</mainClass>
                   <addClasspath>true</addClasspath>
                 </manifest>
               </archive>
