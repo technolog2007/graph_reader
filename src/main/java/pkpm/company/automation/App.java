@@ -15,14 +15,14 @@ public class App {
     log.info("Start program time is : " + LocalDateTime.now());
 
     GraphScanner se = new GraphScanner();
-    se.scanning(getFileName(), getIntervalTime(), getEndTime());
+    se.scanning(getGraphName(), getIntervalTime(), getEndTime());
 
     log.info("End program time is : " + LocalDateTime.now());
   }
 
   /**
-   * Метод встановлює час сканування книги з config файлу, або через інтервал в секундах,
-   * що зазначений у методі
+   * Метод встановлює час сканування книги з config файлу, або через інтервал в секундах, що
+   * зазначений у методі
    *
    * @return
    */
@@ -35,8 +35,8 @@ public class App {
   }
 
   /**
-   * Метод встановлює час завершення програми або з config файлу,
-   * або до зазначеного часу поточного дня
+   * Метод встановлює час завершення програми або з config файлу, або до зазначеного часу поточного
+   * дня
    *
    * @return
    */
@@ -76,13 +76,13 @@ public class App {
    *
    * @return
    */
-  private static String getFileName() {
-    String fileName = System.getenv("FILE_NAME");
-    if (fileName != null) {
-      return fileName;
+  private static String getGraphName() {
+    String graphName = System.getenv("GRAPH_NAME");
+    if (graphName != null) {
+      return graphName;
     } else {
       throw new RuntimeException(
-          "Please, check the configuration file, it does not contain the key \"FILE_NAME\"");
+          "Please, check the configuration file, it does not contain the key \"GRAPH_NAME\"");
     }
   }
 }

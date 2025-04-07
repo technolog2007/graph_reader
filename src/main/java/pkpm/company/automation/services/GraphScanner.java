@@ -6,11 +6,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import pkpm.company.automation.models.BookSnapshot;
+import pkpm.company.automation.models.GraphMessage;
 import pkpm.company.automation.utils.MessageWriter;
 
 @Slf4j
@@ -21,15 +21,15 @@ public class GraphScanner {
   private final List<Date> dateList = new ArrayList<>();
   private LocalDateTime currentTime = LocalDateTime.now();
 
-  public void scanning(String fileName, long pauseTime, LocalDateTime endTime) {
-    save(snapshotList, new MakeSnapshot(fileName));
+  public void scanning(String graphName, long pauseTime, LocalDateTime endTime) {
+    save(snapshotList, new MakeSnapshot(graphName));
     while (currentTime.isBefore(endTime)) {
-      if (checkBookDate(setBookDate(fileName))) { // перевірка, чи була змінена книга
-        save(snapshotList, new MakeSnapshot(fileName));
+      if (checkBookDate(setBookDate(graphName))) { // перевірка, чи була змінена книга
+        save(snapshotList, new MakeSnapshot(graphName));
         definingBookChange(snapshotList);
         update(pauseTime);
       } else {
-        log.info("There are no changes in book!");
+        log.info(GraphMessage.INFORM_NO_CHANGE.getMessage());
         update(pauseTime);
       }
     }
@@ -40,47 +40,63 @@ public class GraphScanner {
     this.currentTime = LocalDateTime.now();
   }
 
-  private void definingBookChange(List<BookSnapshot> bsl) {
+  private void definingBookChange(List<BookSnapshot> bsl) { // bookSnapshotList
     if (bsl.size() == 2) {
       DefiningBookChanges dbc = new DefiningBookChanges(bsl.get(0), bsl.get(1));
       if (dbc.getBookChanges() != null) {
-        if (dbc.getBookChanges().size() == 1) {
-          log.warn("\uD83D\uDCC2➕Додано нову вкладку \"" + dbc.getBookChanges().get(0) + "\"");
-          MessageWriter.writeLine(
-              "\uD83D\uDCC2➕Додано нову вкладку \"" + dbc.getBookChanges().get(0) + "\"");
-        } else if (dbc.getBookChanges().size() > 1) {
-          log.warn(
-              "\uD83D\uDCC2\uD83D\uDCC2➕Додано нові вкладки \"" + dbc.getBookChanges().toString()
-                  + "\"");
-          MessageWriter.writeList(createMessageToPrint(dbc.getBookChanges()));
-        } else if (dbc.getBookChanges().isEmpty()) {
-          Map<String, List<Cell>> changes = dbc.getSheetsChanges(bsl.get(0), bsl.get(1));
-          printChanges(changes);
+        writeBookChanges(dbc.getBookChanges());
+        if (dbc.getBookChanges().isEmpty()) {
+          writeSheetsChanges(dbc.getSheetsChanges(bsl.get(0), bsl.get(1)));
         }
       }
     }
   }
 
-  private List<String> createMessageToPrint(List<String> bookChanges) {
-    List<String> messages = new ArrayList<>();
-    String result = "";
-    for (int i = 0; i < bookChanges.size(); i++) {
-      if (i < bookChanges.size() - 1) {
-        result += bookChanges.get(i) + ", ";
-      } else {
-        result += "" + bookChanges.get(i);
-      }
+  private void writeBookChanges(List<String> bookChanges) {
+    String message;
+    if (bookChanges.size() == 1) {
+      message = GraphMessage.INFORM_ADD_FOLDER.getMessage() + "\"" + bookChanges.get(0) + "\"";
+      log.warn(message);
+    } else {
+      message = GraphMessage.INFORM_ADD_FOLDERS.getMessage() + createMessageBody(bookChanges);
+      log.info(message);
     }
-    messages.add("\uD83D\uDCC2\uD83D\uDCC2➕Додано нові вкладки: \"" + result + "\"");
-    return messages;
+    MessageWriter.writeLine(message);
   }
 
-  private void printChanges(Map<String, List<Cell>> changes) {
+  private void writeSheetsChanges(Map<String, List<Cell>> changes) {
     if (changes.isEmpty()) {
-      log.info("Відсутні зміни в графіку!");
+      log.info(GraphMessage.INFORM_NO_CHANGE.getMessage());
+    } else if (changes.keySet().size() == 1) {
+      for (String sheet : changes.keySet()) {
+        String message = GraphMessage.INFORM_ADD_POSITION.getMessage() + "\"" + sheet + "\"";
+        MessageWriter.writeLine(message);
+        log.info(message);
+      }
     } else {
-      log.info("Додано нові позиції : {}", changes);
+      List<String> sheets = new ArrayList<>(changes.keySet());
+      String message = GraphMessage.INFORM_ADD_POSITIONS.getMessage() + createMessageBody(sheets);
+      MessageWriter.writeLine(message);
+      log.info(message);
     }
+  }
+
+  /**
+   * Створює, у потрібному форматі, тіло повідомлення зі списка змінених сторінок книги
+   *
+   * @param sheets - список змінених сторінок книги
+   * @return - тіло повідомлення
+   */
+  private String createMessageBody(List<String> sheets) {
+    String result = "\"";
+    for (int i = 0; i < sheets.size(); i++) {
+      if (i < sheets.size() - 1) {
+        result += sheets.get(i) + "\", ";
+      } else {
+        result += "\"" + sheets.get(i) + "\"";
+      }
+    }
+    return result;
   }
 
   /**

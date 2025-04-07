@@ -10,6 +10,8 @@ import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import pkpm.company.automation.models.BookSnapshot;
+import pkpm.company.automation.models.GraphMessage;
+import pkpm.company.automation.utils.MessageWriter;
 
 @Slf4j
 public class DefiningBookChanges {
@@ -33,7 +35,7 @@ public class DefiningBookChanges {
     if (bookSheetsNames1.size() <= bookSheetsNames2.size()) {
       return getListOfDifferentSheets(bookSheetsNames1, bookSheetsNames2);
     }
-    log.warn("Відбулося очищення графіка, потрібне ручне перезавантаження!");
+    log.warn(GraphMessage.INFORM_DELETE_FOLDERS.getMessage());
     return null;
   }
 
