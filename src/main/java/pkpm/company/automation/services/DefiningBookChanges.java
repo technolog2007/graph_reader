@@ -6,11 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import pkpm.company.automation.models.BookSnapshot;
-import pkpm.company.automation.models.GraphMessage;
 
 @Slf4j
 public class DefiningBookChanges {
@@ -28,30 +26,21 @@ public class DefiningBookChanges {
    *
    * @return - повертає список назв листів, що були додані
    */
-  public List<String> getBookChanges() {
-    Set<String> bookSheetsNames1 = bs1.getSheetsNames();
-    Set<String> bookSheetsNames2 = bs2.getSheetsNames();
-    if (bookSheetsNames1.size() <= bookSheetsNames2.size()) {
-      return getListOfDifferentSheets(bookSheetsNames1, bookSheetsNames2);
-    }
-    log.warn(GraphMessage.INFORM_DELETE_FOLDERS.getMessage());
-    return null;
+  public Map<String, List<String>> getBookChanges() {
+    return Map.of("delSheets", getDelSheets(bs1.getSheetsNames(), bs2.getSheetsNames()),
+        "attachSheets", getAttachSheets(bs1.getSheetsNames(), bs2.getSheetsNames()));
   }
 
+  private List<String> getDelSheets(Set<String> bookSheetsNames1, Set<String> bookSheetsNames2) {
+    return bookSheetsNames1.stream()
+        .filter(e -> !bookSheetsNames2.contains(e))
+        .collect(Collectors.toList());
+  }
 
-  /**
-   * Порівнює два переліки сторінок графіка і повертає список імен що відрізняються
-   *
-   * @param bookSheetsNames1 - список назв сторінок знімка №1
-   * @param bookSheetsNames2 - список назв сторінок знімка №2
-   * @return - список з назвами сторінок, що відрізняються
-   */
-  private List<String> getListOfDifferentSheets(Set<String> bookSheetsNames1,
-      Set<String> bookSheetsNames2) {
-    return Stream.concat(
-        bookSheetsNames1.stream().filter(e -> !bookSheetsNames2.contains(e)),
-        bookSheetsNames2.stream().filter(e -> !bookSheetsNames1.contains(e))
-    ).collect(Collectors.toList());
+  private List<String> getAttachSheets(Set<String> bookSheetsNames1, Set<String> bookSheetsNames2) {
+    return bookSheetsNames2.stream()
+        .filter(e -> !bookSheetsNames1.contains(e))
+        .collect(Collectors.toList());
   }
 
   /**
@@ -73,7 +62,7 @@ public class DefiningBookChanges {
    * Відсортовує другу колонку по кожному листу книги і повертає список
    *
    * @param columnsOfBook - список колонок листів книги
-   * @param sheetsName - список імен листів книги
+   * @param sheetsName    - список імен листів книги
    * @return - список книги з 2-ми колонками по кожному листу
    */
   private Map<String, List<Cell>> extractSecondColumn(Map<String, List<List<Cell>>> columnsOfBook,
@@ -101,11 +90,11 @@ public class DefiningBookChanges {
   }
 
   /**
-   * Знаходить відмінності і повертає список відмінностей по другій колонці між сторінками
-   * з однаковими назвами знімків книги
+   * Знаходить відмінності і повертає список відмінностей по другій колонці між сторінками з
+   * однаковими назвами знімків книги
    *
-   * @param book1 - список листів знімка книги №1, де є лише 2-га колонка
-   * @param book2 - список листів знімка книги №1, де є лише 2-га колонка
+   * @param book1      - список листів знімка книги №1, де є лише 2-га колонка
+   * @param book2      - список листів знімка книги №1, де є лише 2-га колонка
    * @param sheetsName - список назв листів знімка книги
    * @return - список листів із відмінностями по 2-й колонці знімків
    */

@@ -20,6 +20,9 @@ public class GraphScanner {
   private final List<BookSnapshot> snapshotList = new ArrayList<>(2);
   private final List<Date> dateList = new ArrayList<>();
   private LocalDateTime currentTime = LocalDateTime.now();
+  private final String KEY_1 = "delSheets";
+  private final String KEY_2 = "attachSheets";
+
 
   public void scanning(String graphName, long pauseTime, LocalDateTime endTime) {
     save(snapshotList, new MakeSnapshot(graphName));
@@ -43,25 +46,47 @@ public class GraphScanner {
   private void definingBookChange(List<BookSnapshot> bsl) { // bookSnapshotList
     if (bsl.size() == 2) {
       DefiningBookChanges dbc = new DefiningBookChanges(bsl.get(0), bsl.get(1));
-      if (dbc.getBookChanges() != null && !dbc.getBookChanges().isEmpty()) {
-        writeBookChanges(dbc.getBookChanges());
-        if (dbc.getBookChanges().isEmpty()) {
-          writeSheetsChanges(dbc.getSheetsChanges(bsl.get(0), bsl.get(1)));
-        }
+      Map<String, List<String>> bookChanges = dbc.getBookChanges();
+      if (!bookChanges.get(KEY_1).isEmpty()) {
+        printDelBookChanges(bookChanges);
       }
+      if (!bookChanges.get(KEY_2).isEmpty()) {
+        writeAttachBookChanges(bookChanges.get(KEY_2));
+      }
+      if (bookChanges.get(KEY_1).isEmpty() && bookChanges.get(KEY_2).isEmpty()) {
+        log.info("Зміни вкладок на виявлені!");
+      }
+      writeSheetsChanges(dbc.getSheetsChanges(bsl.get(0), bsl.get(1)));
     }
   }
 
-  private void writeBookChanges(List<String> bookChanges) {
-    String message;
-    if (bookChanges.size() == 1) {
-      message = GraphMessage.INFORM_ADD_FOLDER.getMessage() + "\"" + bookChanges.get(0) + "\"";
+  private void printDelBookChanges(Map<String, List<String>> bookChanges) {
+    if (bookChanges.get(KEY_1).size() == 1) {
+      String message =
+          GraphMessage.INFORM_DELETE_FOLDER.getMessage() + "\"" + bookChanges.get(KEY_1).get(0)
+              + "\"";
       log.warn(message);
     } else {
-      message = GraphMessage.INFORM_ADD_FOLDERS.getMessage() + createMessageBody(bookChanges);
-      log.info(message);
+      String message =
+          GraphMessage.INFORM_DELETE_FOLDERS.getMessage() + createMessageBody(
+              bookChanges.get(KEY_1));
+      log.warn(message);
     }
-    MessageWriter.writeLine(message);
+  }
+
+  private void writeAttachBookChanges(List<String> bookChanges) {
+    if (bookChanges.size() == 1) {
+      String message =
+          GraphMessage.INFORM_ADD_FOLDER.getMessage() + "\"" + bookChanges.get(0) + "\"";
+      log.warn(message);
+      MessageWriter.writeLine(message);
+    }
+    if (bookChanges.size() > 1) {
+      String message =
+          GraphMessage.INFORM_ADD_FOLDERS.getMessage() + createMessageBody(bookChanges);
+      log.warn(message);
+      MessageWriter.writeLine(message);
+    }
   }
 
   private void writeSheetsChanges(Map<String, List<Cell>> changes) {
