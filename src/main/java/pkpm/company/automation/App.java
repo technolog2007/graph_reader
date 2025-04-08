@@ -21,8 +21,8 @@ public class App {
   }
 
   /**
-   * Метод встановлює час сканування книги з config файлу, або через інтервал в секундах, що
-   * зазначений у методі
+   * Встановлює час сканування книги з config файлу, або через інтервал в секундах, що зазначений у
+   * методі
    *
    * @return
    */
@@ -35,8 +35,7 @@ public class App {
   }
 
   /**
-   * Метод встановлює час завершення програми або з config файлу, або до зазначеного часу поточного
-   * дня
+   * Встановлює час завершення програми або з config файлу, або до зазначеного часу поточного дня
    *
    * @return
    */
@@ -54,16 +53,23 @@ public class App {
     }
   }
 
+  /**
+   * Встановлює і повертає поточну дату з відповідним часом (години і хвилини)
+   *
+   * @param hour
+   * @param minutes
+   * @return
+   */
   private static LocalDateTime setTime(int hour, int minutes) {
     return LocalDateTime.of(LocalDateTime.now().toLocalDate(), LocalTime.of(hour, minutes));
   }
 
   /**
-   * Метод створює дату і додає час, до якого працюватиме програма. Час додається із
-   * конфігураційного файлу (ключ "END_TIME")
+   * Створює дату і додає час, до якого працюватиме програма. Час додається із конфігураційного
+   * файлу (ключ "END_TIME")
    *
-   * @param time
-   * @return
+   * @param time - час завершення програми заданий користувачем в config
+   * @return - час закінчення роботи програми
    */
   private static LocalDateTime createEndTime(String time) {
     LocalDate currentDate = LocalDateTime.now().toLocalDate();
@@ -72,9 +78,9 @@ public class App {
   }
 
   /**
-   * Метод повертає значення ім'я файлу, або помилку, якщо відповідний ключ не знайдено.
+   * Повертає значення ім'я файлу, або помилку, якщо відповідний ключ не знайдено.
    *
-   * @return
+   * @return - повне ім'я файлу з графіком
    */
   private static String getGraphName() {
     String graphName = System.getenv("GRAPH_NAME");
