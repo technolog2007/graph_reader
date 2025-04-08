@@ -40,11 +40,11 @@ public class DefiningBookChanges {
 
 
   /**
-   * Порівнює два переліка сторінок графіка і повертає список імен що відрізняються
+   * Порівнює два переліки сторінок графіка і повертає список імен що відрізняються
    *
-   * @param bookSheetsNames1
-   * @param bookSheetsNames2
-   * @return
+   * @param bookSheetsNames1 - список назв сторінок знімка №1
+   * @param bookSheetsNames2 - список назв сторінок знімка №2
+   * @return - список з назвами сторінок, що відрізняються
    */
   private List<String> getListOfDifferentSheets(Set<String> bookSheetsNames1,
       Set<String> bookSheetsNames2) {
@@ -57,19 +57,25 @@ public class DefiningBookChanges {
   /**
    * Метод повинен працювати при умові що обидва знімки з книги мають однакові вкладки
    *
-   * @param bs1
-   * @param bs2
+   * @param bs1 - знімок з книги №1
+   * @param bs2 - знімок з книги №2
    */
   public Map<String, List<Cell>> getSheetsChanges(BookSnapshot bs1, BookSnapshot bs2) {
     Map<String, List<Cell>> filteredColumns1 = extractSecondColumn(bs1.getColumnsOfBook(),
         bs1.getSheetsNames());
     Map<String, List<Cell>> filteredColumns2 = extractSecondColumn(bs2.getColumnsOfBook(),
         bs2.getSheetsNames());
-    Map<String, List<Cell>> result = findDifferentCells(filteredColumns1, filteredColumns2,
+    return findDifferentCells(filteredColumns1, filteredColumns2,
         bs1.getSheetsNames());
-    return result;
   }
 
+  /**
+   * Відсортовує другу колонку по кожному листу книги і повертає список
+   *
+   * @param columnsOfBook - список колонок листів книги
+   * @param sheetsName - список імен листів книги
+   * @return - список книги з 2-ми колонками по кожному листу
+   */
   private Map<String, List<Cell>> extractSecondColumn(Map<String, List<List<Cell>>> columnsOfBook,
       Set<String> sheetsName) {
     Map<String, List<Cell>> result = new HashMap<>();
@@ -89,12 +95,13 @@ public class DefiningBookChanges {
   }
 
   /**
-   * Метод приймає книгу з відфільтрованою 2-ю колонкою, і повертає книгу лише зі змінами.
+   * Знаходить відмінності і повертає список відмінностей по другій колонці між сторінками
+   * з однаковими назвами знімків книги
    *
-   * @param book1
-   * @param book2
-   * @param sheetsName
-   * @return
+   * @param book1 - список листів знімка книги №1, де є лише 2-га колонка
+   * @param book2 - список листів знімка книги №1, де є лише 2-га колонка
+   * @param sheetsName - список назв листів знімка книги
+   * @return - список листів із відмінностями по 2-й колонці знімків
    */
   private Map<String, List<Cell>> findDifferentCells(Map<String, List<Cell>> book1,
       Map<String, List<Cell>> book2, Set<String> sheetsName) {
