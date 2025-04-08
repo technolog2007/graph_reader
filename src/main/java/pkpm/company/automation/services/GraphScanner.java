@@ -43,7 +43,7 @@ public class GraphScanner {
   private void definingBookChange(List<BookSnapshot> bsl) { // bookSnapshotList
     if (bsl.size() == 2) {
       DefiningBookChanges dbc = new DefiningBookChanges(bsl.get(0), bsl.get(1));
-      if (dbc.getBookChanges() != null) {
+      if (dbc.getBookChanges() != null && !dbc.getBookChanges().isEmpty()) {
         writeBookChanges(dbc.getBookChanges());
         if (dbc.getBookChanges().isEmpty()) {
           writeSheetsChanges(dbc.getSheetsChanges(bsl.get(0), bsl.get(1)));

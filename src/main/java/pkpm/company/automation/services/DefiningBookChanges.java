@@ -114,7 +114,7 @@ public class DefiningBookChanges {
       int maxSize = col2.size();
       int difSize = maxSize - minSize;
 
-      for (int i = maxSize-difSize; i < maxSize; i++) {
+      for (int i = maxSize - difSize; i < maxSize; i++) {
         diffCells.add(col2.get(i));
       }
       if (!diffCells.isEmpty()) {
