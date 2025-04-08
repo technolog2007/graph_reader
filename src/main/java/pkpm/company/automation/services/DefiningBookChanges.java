@@ -24,9 +24,9 @@ public class DefiningBookChanges {
   }
 
   /**
-   * Метод визначає, чи були додані нові вкладки!
+   * Визначає, чи були зміни (додані або видалені) у вкладках книги
    *
-   * @return
+   * @return - повертає список назв листів, що були додані
    */
   public List<String> getBookChanges() {
     Set<String> bookSheetsNames1 = bs1.getSheetsNames();
@@ -40,7 +40,7 @@ public class DefiningBookChanges {
 
 
   /**
-   * Метод порівнює два переліка сторінок графіка і повертає список імен що відрізняються
+   * Порівнює два переліка сторінок графіка і повертає список імен що відрізняються
    *
    * @param bookSheetsNames1
    * @param bookSheetsNames2
@@ -55,7 +55,7 @@ public class DefiningBookChanges {
   }
 
   /**
-   * Даний метод повинен працювати при умові що обидва знімки з книги мають однакові вкладки
+   * Метод повинен працювати при умові що обидва знімки з книги мають однакові вкладки
    *
    * @param bs1
    * @param bs2
