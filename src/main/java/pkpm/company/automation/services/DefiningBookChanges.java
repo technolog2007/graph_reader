@@ -89,6 +89,12 @@ public class DefiningBookChanges {
     return result;
   }
 
+  /**
+   * Видаляє нульові значення з колонки книги
+   *
+   * @param column - колонка книги
+   * @return - відфільтрована колонка книги, без нульових значень
+   */
   private List<Cell> deleteNullValue(List<Cell> column) {
     column.removeIf(cell -> cell == null || cell.toString().equals(" "));
     return column;
