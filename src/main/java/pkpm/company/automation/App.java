@@ -48,7 +48,7 @@ public class App {
       log.warn("Програма працюватиме до {}!", System.getenv("END_TIME"));
       return dateTimeEnd;
     } catch (DateTimeParseException | NullPointerException e) {
-      log.warn("Програма працюватиме до 20:00!");
+      log.warn("Програма по замовчуванню працюватиме до 20:00!");
       return setTime(20, 0);
     }
   }

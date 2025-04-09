@@ -54,7 +54,7 @@ public class GraphScanner {
         writeAttachBookChanges(bookChanges.get(KEY_2));
       }
       if (bookChanges.get(KEY_1).isEmpty() && bookChanges.get(KEY_2).isEmpty()) {
-        log.info("Зміни вкладок на виявлені!");
+        log.info("Зміни вкладок не виявлені!");
       }
       writeSheetsChanges(dbc.getSheetsChanges(bsl.get(0), bsl.get(1)));
     }
