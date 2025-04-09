@@ -84,11 +84,11 @@ public class App {
    */
   private static String getGraphName() {
     String graphName = System.getenv("GRAPH_NAME");
+    log.info("graph_file is : {}", graphName);
     if (graphName != null) {
       return graphName;
     } else {
-      throw new RuntimeException(
-          "Please, check the configuration file, it does not contain the key \"GRAPH_NAME\"");
+      return "Y:\\Графіки роботи ВТВС\\График выдачи докуметации.xlsx";
     }
   }
 }

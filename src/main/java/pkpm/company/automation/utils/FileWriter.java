@@ -4,10 +4,10 @@ import java.io.IOException;
 import java.nio.file.*;
 
 public class FileWriter {
-  private static final String FILE_PATH = "output.txt";
+  private static final String FILE_NAME = System.getenv("FILE_NAME");
 
   public static void main(String[] args) throws IOException {
-    Path path = Paths.get("tracked_file.txt"); // Файл, який скануємо
+    Path path = Paths.get(FILE_NAME); // Файл, який скануємо
     WatchService watchService = FileSystems.getDefault().newWatchService();
     path.getParent().register(watchService, StandardWatchEventKinds.ENTRY_MODIFY);
 
@@ -29,7 +29,7 @@ public class FileWriter {
   }
 
   private static void writeToFile(String message) {
-    try (java.io.FileWriter writer = new java.io.FileWriter(FILE_PATH, true)) {
+    try (java.io.FileWriter writer = new java.io.FileWriter(FILE_NAME, true)) {
       writer.write(message + "\n");
     } catch (IOException e) {
       e.printStackTrace();
