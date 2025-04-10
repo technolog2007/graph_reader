@@ -32,7 +32,6 @@ public class GraphScanner {
         definingBookChange(snapshotList);
         update(pauseTime);
       } else {
-        log.info(GraphMessage.INFORM_NO_CHANGE.getMessage());
         update(pauseTime);
       }
     }
