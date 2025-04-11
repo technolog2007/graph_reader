@@ -10,7 +10,6 @@ public class MessageWriter {
 
   public static void writeList(List<String> messages) {
     try (FileWriter fw = new FileWriter(FILE_NAME, true)) {
-
       for (String mes : messages) {
         fw.write(mes + "\n");
       }
