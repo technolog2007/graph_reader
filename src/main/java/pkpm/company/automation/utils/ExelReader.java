@@ -22,9 +22,13 @@ public class ExelReader {
 
   public static void read(String fileName) {
     File file = new File(fileName);
+    if (!file.canRead()) {
+      log.warn("File is not readable: " + fileName);
+      return;
+    }
     try (FileInputStream fis = new FileInputStream(file);
         Workbook wb = new XSSFWorkbook(fis)) {
-      log.info("The file has been read successfully!!! " + wb.getNumberOfSheets());
+      log.info("The file has been read successfully!!! Sheets numbers are : {}", wb.getNumberOfSheets());
       workbook = wb;
       bookDate = new Date(file.lastModified());
     } catch (IOException e) {
