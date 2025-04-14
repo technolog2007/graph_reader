@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import pkpm.company.automation.models.BookSnapshot;
@@ -19,21 +20,21 @@ public class GraphScanner {
 
   private final List<BookSnapshot> snapshotList = new ArrayList<>(2);
   private final List<Date> dateList = new ArrayList<>();
-  private LocalDateTime currentTime = LocalDateTime.now();
   private final String KEY_1 = "delSheets";
   private final String KEY_2 = "attachSheets";
 
+  public BookSnapshot set(int index, BookSnapshot element) {
+    return snapshotList.set(index, element);
+  }
 
-  public void scanning(String graphName, long pauseTime, LocalDateTime endTime) {
-    save(snapshotList, new MakeSnapshot(graphName));
-    while (currentTime.isBefore(endTime)) {
-      if (checkBookDate(setBookDate(graphName))) { // перевірка, чи була змінена книга
-        save(snapshotList, new MakeSnapshot(graphName));
-        definingBookChange(snapshotList);
-        update(pauseTime);
-      } else {
-        update(pauseTime);
-      }
+  public void scanning(String graphName, long pauseTime) {
+//    save(snapshotList, new MakeSnapshot(graphName));
+    if (checkBookDate(setBookDate(graphName))) { // перевірка, чи була змінена книга
+      save(snapshotList, new MakeSnapshot(graphName));
+      definingBookChange(snapshotList);
+      update(pauseTime);
+    } else {
+      update(pauseTime);
     }
   }
 

@@ -6,18 +6,34 @@ import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
 import lombok.extern.slf4j.Slf4j;
 import pkpm.company.automation.services.GraphScanner;
+import pkpm.company.automation.services.MakeSnapshot;
 
 @Slf4j
 public class App {
+
+  private final static LocalDateTime CURRENT_TIME = LocalDateTime.now();
+  private final static String GRAPH_NAME = getGraphName();
 
   public static void main(String[] args) {
 
     log.info("Start program time is : " + LocalDateTime.now());
 
-    GraphScanner se = new GraphScanner();
-    se.scanning(getGraphName(), getIntervalTime(), getEndTime());
+    GraphScanner gs = createGraphScanner(GRAPH_NAME);
+    scanning(gs, getEndTime(), GRAPH_NAME);
 
     log.info("End program time is : " + LocalDateTime.now());
+  }
+
+  private static GraphScanner createGraphScanner(String graphName) {
+    GraphScanner gs = new GraphScanner();
+    gs.set(0, new MakeSnapshot(graphName).getBs());
+    return gs;
+  }
+
+  private static void scanning(GraphScanner gs, LocalDateTime endTime, String graphName) {
+    while (CURRENT_TIME.isBefore(endTime)) {
+      gs.scanning(graphName, getIntervalTime());
+    }
   }
 
   /**

@@ -21,7 +21,7 @@ public class MakeSnapshot {
 
   public MakeSnapshot(String fileName) {
     ExelReader.read(fileName);
-    this.bs.setDate(ExelReader.getBookDate());
+    this.bs.setDate(ExelReader.getFileDate());
     this.bs.setNumOfSheets(ExelReader.getSheets().size());
     this.bs.setSheetsNames(getSheetsNames());
     this.bs.setColumnsOfBook(getColumnsOfBook());

@@ -4,21 +4,20 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 
 @Slf4j
 public class ExelReader {
 
   @Getter
-  private static Date bookDate;
-  @Getter
   private static Workbook workbook;
+  @Getter
+  private static long fileDate;
 
   public static void read(String fileName) {
     File file = new File(fileName);
@@ -27,10 +26,11 @@ public class ExelReader {
       return;
     }
     try (FileInputStream fis = new FileInputStream(file);
-        Workbook wb = new XSSFWorkbook(fis)) {
-      log.info("The file has been read successfully!!! Sheets numbers are : {}", wb.getNumberOfSheets());
+        Workbook wb = WorkbookFactory.create(fis)) {
+      log.info("The file has been read successfully!!! Sheets numbers are : {}",
+          wb.getNumberOfSheets());
       workbook = wb;
-      bookDate = new Date(file.lastModified());
+      fileDate = file.lastModified();
     } catch (IOException e) {
       log.warn("There are problems with the file: " + fileName);
     }
