@@ -1,9 +1,7 @@
 package pkpm.company.automation.services;
 
 import java.io.File;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import lombok.Getter;
@@ -16,36 +14,27 @@ import pkpm.company.automation.utils.MessageWriter;
 
 @Slf4j
 @Getter
+@Setter
 public class GraphScanner {
 
-  private final List<BookSnapshot> snapshotList = new ArrayList<>(2);
-  private final List<Date> dateList = new ArrayList<>();
+  private BookSnapshot oldSnapshot;
+  private BookSnapshot newSnapshot;
   private final String KEY_1 = "delSheets";
   private final String KEY_2 = "attachSheets";
 
-  public BookSnapshot set(int index, BookSnapshot element) {
-    return snapshotList.set(index, element);
-  }
-
-  public void scanning(String graphName, long pauseTime) {
-//    save(snapshotList, new MakeSnapshot(graphName));
-    if (checkBookDate(setBookDate(graphName))) { // перевірка, чи була змінена книга
-      save(snapshotList, new MakeSnapshot(graphName));
-      definingBookChange(snapshotList);
-      update(pauseTime);
-    } else {
-      update(pauseTime);
+  public void scanning(String graphName) {
+    File file = new File(graphName);
+    if (file.lastModified() != oldSnapshot.getDate()) {
+      newSnapshot = new MakeSnapshot(graphName).getBs();
+      definingBookChange(oldSnapshot, newSnapshot);
+      oldSnapshot = newSnapshot;
+      newSnapshot = null;
     }
   }
 
-  private void update(long pauseTime) {
-    pause(pauseTime);
-    this.currentTime = LocalDateTime.now();
-  }
-
-  private void definingBookChange(List<BookSnapshot> bsl) { // bookSnapshotList
-    if (bsl.size() == 2) {
-      DefiningBookChanges dbc = new DefiningBookChanges(bsl.get(0), bsl.get(1));
+  private void definingBookChange(BookSnapshot oldSnapshot, BookSnapshot newSnapshot) {
+    if (oldSnapshot != null && newSnapshot != null) {
+      DefiningBookChanges dbc = new DefiningBookChanges(oldSnapshot, newSnapshot);
       Map<String, List<String>> bookChanges = dbc.getBookChanges();
       if (!bookChanges.get(KEY_1).isEmpty()) {
         printDelBookChanges(bookChanges);
@@ -53,10 +42,7 @@ public class GraphScanner {
       if (!bookChanges.get(KEY_2).isEmpty()) {
         writeAttachBookChanges(bookChanges.get(KEY_2));
       }
-//      if (bookChanges.get(KEY_1).isEmpty() && bookChanges.get(KEY_2).isEmpty()) {
-//        log.info("Зміни вкладок не виявлені!");
-//      }
-      writeSheetsChanges(dbc.getSheetsChanges(bsl.get(0), bsl.get(1)));
+      writeSheetsChanges(dbc.getSheetsChanges(oldSnapshot, newSnapshot));
     }
   }
 
@@ -123,53 +109,5 @@ public class GraphScanner {
     }
     return result;
   }
-
-  /**
-   * Визначає останню дату книги та повертає список з датами книг
-   *
-   * @param fileName -
-   * @return -
-   */
-  private List<Date> setBookDate(String fileName) {
-    if (dateList.isEmpty()) {
-      dateList.add(new Date(new File(fileName).lastModified()));
-      return dateList;
-    } else if (dateList.size() == 1) {
-      dateList.add(new Date(new File(fileName).lastModified()));
-      return dateList;
-    } else {
-      dateList.set(0, dateList.get(1));
-      dateList.set(1, new Date(new File(fileName).lastModified()));
-      return dateList;
-    }
-  }
-
-  private boolean checkBookDate(List<Date> bookDateList) {
-    if (!bookDateList.isEmpty() && bookDateList.size() > 1) {
-      return !bookDateList.get(0).equals(bookDateList.get(1)) && bookDateList.get(0)
-          .before(bookDateList.get(1));
-    }
-    return false;
-  }
-
-  private void save(List<BookSnapshot> bsl, MakeSnapshot ms) {
-    if (bsl.isEmpty()) {
-      bsl.add(ms.getBs());
-    } else if (bsl.size() == 1) {
-      bsl.add(1, ms.getBs());
-    } else {
-      bsl.set(0, bsl.get(1));
-      bsl.set(1, ms.getBs());
-    }
-  }
-
-  private void pause(long seconds) {
-    try {
-      Thread.sleep(seconds * 1000);
-    } catch (InterruptedException e) {
-      throw new RuntimeException(e);
-    }
-  }
-
 }
 

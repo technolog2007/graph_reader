@@ -11,7 +11,7 @@ import pkpm.company.automation.services.MakeSnapshot;
 @Slf4j
 public class App {
 
-  private final static LocalDateTime CURRENT_TIME = LocalDateTime.now();
+  private static LocalDateTime currentTime = LocalDateTime.now();
   private final static String GRAPH_NAME = getGraphName();
 
   public static void main(String[] args) {
@@ -26,13 +26,27 @@ public class App {
 
   private static GraphScanner createGraphScanner(String graphName) {
     GraphScanner gs = new GraphScanner();
-    gs.set(0, new MakeSnapshot(graphName).getBs());
+    gs.setOldSnapshot(new MakeSnapshot(graphName).getBs());
     return gs;
   }
 
   private static void scanning(GraphScanner gs, LocalDateTime endTime, String graphName) {
-    while (CURRENT_TIME.isBefore(endTime)) {
-      gs.scanning(graphName, getIntervalTime());
+    while (currentTime.isBefore(endTime)) {
+      gs.scanning(graphName);
+      update(getIntervalTime());
+    }
+  }
+
+  private static void update(long pauseTime) {
+    pause(pauseTime);
+    currentTime = LocalDateTime.now();
+  }
+
+  private static void pause(long seconds) {
+    try {
+      Thread.sleep(seconds * 1000);
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
     }
   }
 
