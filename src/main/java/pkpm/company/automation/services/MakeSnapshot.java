@@ -1,5 +1,7 @@
 package pkpm.company.automation.services;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import pkpm.company.automation.models.BookSnapshot;
 import pkpm.company.automation.utils.ExelReader;
 
@@ -20,11 +23,27 @@ public class MakeSnapshot {
   private final BookSnapshot bs = new BookSnapshot();
 
   public MakeSnapshot(String fileName) {
-    ExelReader.read(fileName);
+    ExelReader.read(copyGraph(fileName).toString());
     this.bs.setDate(ExelReader.getFileDate());
     this.bs.setNumOfSheets(ExelReader.getSheets().size());
     this.bs.setSheetsNames(getSheetsNames());
     this.bs.setColumnsOfBook(getColumnsOfBook());
+  }
+
+  private Path copyGraph(String fileName){
+    Path path = null;
+    try {
+      path = ExelReader.createTempCopy(Path.of(fileName));
+      log.info("File copied successfully to directory: {}", path);
+      return path;
+    } catch (IOException e) {
+      throw new RuntimeException("Cannot read the file: " + fileName);
+    }
+  }
+
+  private Workbook readGraph(Path path){
+    ExelReader.read(String.valueOf(path));
+    return ExelReader.getWorkbook();
   }
 
   private Set<String> getSheetsNames() {

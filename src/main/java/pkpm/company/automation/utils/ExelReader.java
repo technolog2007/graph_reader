@@ -3,6 +3,9 @@ package pkpm.company.automation.utils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
@@ -43,4 +46,11 @@ public class ExelReader {
     }
     return bookSheets;
   }
+
+  public static Path createTempCopy(Path originalPath) throws IOException {
+    Path tempFile = Files.createTempFile(Path.of("e:\\Projects\\Deploy_product\\temp\\"), "copy_", ".xlsx");
+    Files.copy(originalPath, tempFile, StandardCopyOption.REPLACE_EXISTING);
+    return tempFile;
+  }
+
 }
