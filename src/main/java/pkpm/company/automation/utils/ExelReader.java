@@ -22,6 +22,8 @@ public class ExelReader {
   @Getter
   private static long fileDate;
 
+  private static final String PATH = System.getenv("TEMPORARY_PATH");
+
   public static void read(String fileName) {
     File file = new File(fileName);
     if (!file.canRead()) {
@@ -48,9 +50,17 @@ public class ExelReader {
   }
 
   public static Path createTempCopy(Path originalPath) throws IOException {
-    Path tempFile = Files.createTempFile(Path.of("e:\\Projects\\Deploy_product\\temp\\"), "copy_", ".xlsx");
+    Path tempFile = Files.createTempFile(Path.of(PATH), "copy_", ".xlsx");
     Files.copy(originalPath, tempFile, StandardCopyOption.REPLACE_EXISTING);
     return tempFile;
   }
 
+  public static void deleteTempCopy(Path path){
+    try {
+      Files.delete(path);
+      log.info("Temporary file deleted successfully: {}", path);
+    } catch (IOException e) {
+      log.warn("Unable to delete temporary file: {}", path);
+    }
+  }
 }

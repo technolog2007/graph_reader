@@ -23,11 +23,13 @@ public class MakeSnapshot {
   private final BookSnapshot bs = new BookSnapshot();
 
   public MakeSnapshot(String fileName) {
-    ExelReader.read(copyGraph(fileName).toString());
+    Path path = copyGraph(fileName);
+    ExelReader.read(path.toString());
     this.bs.setDate(ExelReader.getFileDate());
     this.bs.setNumOfSheets(ExelReader.getSheets().size());
     this.bs.setSheetsNames(getSheetsNames());
     this.bs.setColumnsOfBook(getColumnsOfBook());
+    ExelReader.deleteTempCopy(path);
   }
 
   private Path copyGraph(String fileName){
@@ -39,11 +41,6 @@ public class MakeSnapshot {
     } catch (IOException e) {
       throw new RuntimeException("Cannot read the file: " + fileName);
     }
-  }
-
-  private Workbook readGraph(Path path){
-    ExelReader.read(String.valueOf(path));
-    return ExelReader.getWorkbook();
   }
 
   private Set<String> getSheetsNames() {
