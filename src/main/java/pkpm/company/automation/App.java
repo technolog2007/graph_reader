@@ -75,10 +75,10 @@ public class App {
       if (dateTimeEnd.isBefore(LocalDateTime.now())) {
         throw new NullPointerException();
       }
-      log.warn("Програма працюватиме до {}!", System.getenv("END_TIME"));
+      log.warn("The program will run until {}!", System.getenv("END_TIME"));
       return dateTimeEnd;
     } catch (DateTimeParseException | NullPointerException e) {
-      log.warn("Програма по замовчуванню працюватиме до 20:00!");
+      log.warn("The default program will run until 20:00!");
       return setTime(20, 0);
     }
   }
