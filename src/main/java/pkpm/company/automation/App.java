@@ -32,7 +32,7 @@ public class App {
 
   private static void scanning(GraphScanner gs, LocalDateTime endTime, String graphName) {
     while (currentTime.isBefore(endTime)) {
-      gs.scanning(graphName);
+      gs.scanAllTime(graphName);
       update(getIntervalTime());
     }
   }

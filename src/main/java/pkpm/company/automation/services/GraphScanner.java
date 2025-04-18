@@ -1,6 +1,9 @@
 package pkpm.company.automation.services;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -22,14 +25,29 @@ public class GraphScanner {
   private final String KEY_1 = "delSheets";
   private final String KEY_2 = "attachSheets";
 
-  public void scanning(String graphName) {
+  public void scanAllTime(String graphName) {
     File file = new File(graphName);
     if (file.lastModified() != oldSnapshot.getDate()) {
-      newSnapshot = new MakeSnapshot(graphName).getBs();
-      definingBookChange(oldSnapshot, newSnapshot);
-      oldSnapshot = newSnapshot;
-      newSnapshot = null;
+      printChanges(graphName);
     }
+  }
+
+  public void scanButtonPress(String graphName) {
+    File file = new File(System.getenv("TRIGGER"));
+    try (FileReader fr = new FileReader(file); BufferedReader br = new BufferedReader(fr)) {
+      if (br.readLine().equals("ready")) {
+        printChanges(graphName);
+      }
+    } catch (IOException e) {
+      log.warn("Problem with file {}", graphName);
+    }
+  }
+
+  private void printChanges(String graphName) {
+    newSnapshot = new MakeSnapshot(graphName).getBs();
+    definingBookChange(oldSnapshot, newSnapshot);
+    oldSnapshot = newSnapshot;
+    newSnapshot = null;
   }
 
   private void definingBookChange(BookSnapshot oldSnapshot, BookSnapshot newSnapshot) {
