@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
+import java.util.Scanner;
 import lombok.extern.slf4j.Slf4j;
 import pkpm.company.automation.services.GraphScanner;
 import pkpm.company.automation.services.MakeSnapshot;
@@ -15,13 +16,33 @@ public class App {
   private final static String GRAPH_NAME = getGraphName();
 
   public static void main(String[] args) {
-
-    log.info("Start program time is : " + LocalDateTime.now());
-
+    int startNum = optionChoice();
     GraphScanner gs = createGraphScanner(GRAPH_NAME);
-    scanning(gs, getEndTime(), GRAPH_NAME);
+    if (startNum == 1) {
+      log.info("start 1 scenario");
+      log.info("Start program time is : " + LocalDateTime.now());
 
-    log.info("End program time is : " + LocalDateTime.now());
+      scanningAllTime(gs, getEndTime(), GRAPH_NAME);
+
+      log.info("End program time is : " + LocalDateTime.now());
+    }
+    if (startNum == 2) {
+      log.info("start 2 scenario");
+      scanningWithMacros(gs, getEndTime(), GRAPH_NAME);
+    }
+  }
+
+  private static int optionChoice() {
+    log.info("Оберіть варіант роботи програми:");
+    log.info("- для постійного сканування введіть \"1\"");
+    log.info("- для сканування із використанням макроса введіть \"2\"");
+    Scanner scanner = new Scanner(System.in);
+    String line = scanner.next();
+    while (!line.equals("1") && !line.equals("2")) {
+      log.warn("Введіть повторно \"1\" або \"2\"!");
+      line = scanner.next();
+    }
+    return Integer.parseInt(line);
   }
 
   private static GraphScanner createGraphScanner(String graphName) {
@@ -30,9 +51,18 @@ public class App {
     return gs;
   }
 
-  private static void scanning(GraphScanner gs, LocalDateTime endTime, String graphName) {
+  private static void scanningAllTime(GraphScanner gs, LocalDateTime endTime, String graphName) {
+
     while (currentTime.isBefore(endTime)) {
-      gs.scanAllTime(graphName);
+      gs.scanAllTime(GRAPH_NAME);
+      update(getIntervalTime());
+    }
+  }
+
+  private static void scanningWithMacros(GraphScanner gs, LocalDateTime endTime, String graphName) {
+
+    while (currentTime.isBefore(endTime)) {
+      gs.scanButtonPress(graphName);
       update(getIntervalTime());
     }
   }

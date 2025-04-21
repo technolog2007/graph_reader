@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -34,12 +36,28 @@ public class GraphScanner {
 
   public void scanButtonPress(String graphName) {
     File file = new File(System.getenv("TRIGGER"));
-    try (FileReader fr = new FileReader(file); BufferedReader br = new BufferedReader(fr)) {
-      if (br.readLine().equals("ready")) {
-        printChanges(graphName);
+    if (file.exists()) {
+      try (FileReader fr = new FileReader(file); BufferedReader br = new BufferedReader(fr)) {
+        String line = br.readLine();
+        if (line != null && line.equals("ready")) {
+          printChanges(graphName);
+        }
+      } catch (IOException e) {
+        log.warn("Problem with file {}", graphName);
+      } finally {
+        deleteTrigger();
       }
+    }
+  }
+
+  private void deleteTrigger() {
+    try {
+      Path path = Path.of(System.getenv("TRIGGER"));
+      log.info(path.toString());
+      Files.delete(path);
+      log.info("Trigger file deleted successfully");
     } catch (IOException e) {
-      log.warn("Problem with file {}", graphName);
+      log.warn("Unable to delete trigger file, because {}", e.getMessage());
     }
   }
 
