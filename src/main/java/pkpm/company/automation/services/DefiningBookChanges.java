@@ -13,11 +13,8 @@ import pkpm.company.automation.models.BookSnapshot;
 
 @Slf4j
 public class DefiningBookChanges {
-  @Pattern(regexp = "^[a-zA-Z0-9.-_\\s]*Лист[a-zA-Z0-9.-_\\s]*$",
-      message = "Назва вкладки ще не ідентифікована!")
+
   BookSnapshot bs1;
-  @Pattern(regexp = "^[a-zA-Z0-9._-]*Лист[a-zA-Z0-9.-]*$",
-      message = "Назва вкладки ще не ідентифікована!")
   BookSnapshot bs2;
 
   public DefiningBookChanges(BookSnapshot bs1, BookSnapshot bs2) {
