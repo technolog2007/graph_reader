@@ -52,7 +52,6 @@ public class App {
   }
 
   private static void scanningAllTime(GraphScanner gs, LocalDateTime endTime, String graphName) {
-
     while (currentTime.isBefore(endTime)) {
       gs.scanAllTime(GRAPH_NAME);
       update(getIntervalTime());
@@ -60,7 +59,6 @@ public class App {
   }
 
   private static void scanningWithMacros(GraphScanner gs, LocalDateTime endTime, String graphName) {
-
     while (currentTime.isBefore(endTime)) {
       gs.scanButtonPress(graphName);
       update(getIntervalTime());

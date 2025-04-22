@@ -98,10 +98,13 @@ public class GraphScanner {
 
   private void writeAttachBookChanges(List<String> bookChanges) {
     if (bookChanges.size() == 1) {
-      String message =
-          GraphMessage.INFORM_ADD_FOLDER.getMessage() + "\"" + bookChanges.get(0) + "\"";
-      log.warn(message);
-      MessageWriter.writeLine(message);
+      String change = bookChanges.get(0).toLowerCase();
+//      if (!change.contains("лист")) {
+        String message =
+            GraphMessage.INFORM_ADD_FOLDER.getMessage() + "\"" + bookChanges.get(0) + "\"";
+        log.warn(message);
+        MessageWriter.writeLine(message);
+//      }
     }
     if (bookChanges.size() > 1) {
       String message =
