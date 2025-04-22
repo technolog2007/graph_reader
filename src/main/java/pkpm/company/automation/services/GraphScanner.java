@@ -25,7 +25,7 @@ public class GraphScanner {
   private BookSnapshot oldSnapshot;
   private BookSnapshot newSnapshot;
   private final String KEY_1 = "delSheets";
-  private final String KEY_2 = "attachSheets";
+  private final String KEY_2 = "addSheets";
 
   public void scanAllTime(String graphName) {
     File file = new File(graphName);

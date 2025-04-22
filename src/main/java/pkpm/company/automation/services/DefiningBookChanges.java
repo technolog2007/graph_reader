@@ -1,6 +1,5 @@
 package pkpm.company.automation.services;
 
-import jakarta.validation.constraints.Pattern;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +28,7 @@ public class DefiningBookChanges {
    */
   public Map<String, List<String>> getBookChanges() {
     return Map.of("delSheets", getDelSheets(bs1.getSheetsNames(), bs2.getSheetsNames()),
-        "attachSheets", getAttachSheets(bs1.getSheetsNames(), bs2.getSheetsNames()));
+        "addSheets", getAddSheets(bs1.getSheetsNames(), bs2.getSheetsNames()));
   }
 
   private List<String> getDelSheets(Set<String> bookSheetsNames1, Set<String> bookSheetsNames2) {
@@ -38,9 +37,10 @@ public class DefiningBookChanges {
         .collect(Collectors.toList());
   }
 
-  private List<String> getAttachSheets(Set<String> bookSheetsNames1, Set<String> bookSheetsNames2) {
+  private List<String> getAddSheets(Set<String> bookSheetsNames1, Set<String> bookSheetsNames2) {
     return bookSheetsNames2.stream()
         .filter(e -> !bookSheetsNames1.contains(e))
+        .filter(e -> !e.contains("Лист"))
         .collect(Collectors.toList());
   }
 

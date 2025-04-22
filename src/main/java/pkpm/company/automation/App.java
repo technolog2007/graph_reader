@@ -16,6 +16,7 @@ public class App {
   private final static String GRAPH_NAME = getGraphName();
 
   public static void main(String[] args) {
+
     int startNum = optionChoice();
     GraphScanner gs = createGraphScanner(GRAPH_NAME);
     if (startNum == 1) {
@@ -33,16 +34,22 @@ public class App {
   }
 
   private static int optionChoice() {
-    log.info("Оберіть варіант роботи програми:");
-    log.info("- для постійного сканування введіть \"1\"");
-    log.info("- для сканування із використанням макроса введіть \"2\"");
+    LocalDateTime endTime = LocalDateTime.now().plusSeconds(15);
     Scanner scanner = new Scanner(System.in);
-    String line = scanner.next();
-    while (!line.equals("1") && !line.equals("2")) {
-      log.warn("Введіть повторно \"1\" або \"2\"!");
-      line = scanner.next();
+    while (endTime.isAfter(LocalDateTime.now())) {
+      log.info("Оберіть варіант роботи програми:");
+      log.info("- для постійного сканування введіть \"1\"");
+      log.info("- для сканування із використанням макроса введіть \"2\"");
+      String line = scanner.next();
+//      while (!line.equals("1") && !line.equals("2")) {
+//        log.warn("Введіть повторно \"1\" або \"2\"!");
+//        line = scanner.next();
+//      }
+      if (line.equals("1") || line.equals("2")) {
+        return Integer.parseInt(line);
+      }
     }
-    return Integer.parseInt(line);
+    return 2;
   }
 
   private static GraphScanner createGraphScanner(String graphName) {
