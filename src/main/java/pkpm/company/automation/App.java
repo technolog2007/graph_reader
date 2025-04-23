@@ -5,6 +5,12 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
 import java.util.Scanner;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import lombok.extern.slf4j.Slf4j;
 import pkpm.company.automation.services.GraphScanner;
 import pkpm.company.automation.services.MakeSnapshot;
@@ -35,21 +41,32 @@ public class App {
 
   private static int optionChoice() {
     LocalDateTime endTime = LocalDateTime.now().plusSeconds(15);
+    ExecutorService executor = Executors.newSingleThreadExecutor();
     Scanner scanner = new Scanner(System.in);
-    while (endTime.isAfter(LocalDateTime.now())) {
+    Callable<String> inputTask = () -> {
       log.info("Оберіть варіант роботи програми:");
       log.info("- для постійного сканування введіть \"1\"");
       log.info("- для сканування із використанням макроса введіть \"2\"");
-      String line = scanner.next();
-//      while (!line.equals("1") && !line.equals("2")) {
-//        log.warn("Введіть повторно \"1\" або \"2\"!");
-//        line = scanner.next();
-//      }
-      if (line.equals("1") || line.equals("2")) {
-        return Integer.parseInt(line);
+      return scanner.nextLine();
+    };
+    Future<String> future = executor.submit(inputTask);
+    String selectedScenario = "2"; // за замовчуванням
+    try {
+      // Чекаємо максимум 60 секунд
+      String userInput = future.get(20, TimeUnit.SECONDS);
+      if (userInput.equals("1") || userInput.equals("2")) {
+        selectedScenario = userInput;
+      } else {
+        log.info("Некоректний ввід. Виконується сценарій за замовчуванням.");
       }
+    } catch (TimeoutException e) {
+      log.info("Час вичерпано. Виконується сценарій за замовчуванням.");
+    } catch (Exception e) {
+      log.info("Сталася помилка: " + e.getMessage());
+    } finally {
+      executor.shutdownNow();
     }
-    return 2;
+    return Integer.parseInt(selectedScenario);
   }
 
   private static GraphScanner createGraphScanner(String graphName) {

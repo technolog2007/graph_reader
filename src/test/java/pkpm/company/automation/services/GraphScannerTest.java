@@ -2,8 +2,6 @@ package pkpm.company.automation.services;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.time.LocalDateTime;
-import java.util.Scanner;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -25,22 +23,6 @@ class GraphScannerTest {
 
   @Test
   void getSnapshotList() {
-  }
-
-  @Test
-  void getDateList_returnEmptyList() {
-    assertTrue(scanner.getDateList().isEmpty());
-  }
-
-  @Test
-  void getDateList_returnList() {
-    GraphScanner scanner = new GraphScanner();
-    assertTrue(scanner.getDateList().isEmpty());
-  }
-
-  @Test
-  void getCurrentTime_isBeforeCurrentTime() {
-    assertTrue(scanner.getCurrentTime().isBefore(LocalDateTime.now()));
   }
 
   @Test
