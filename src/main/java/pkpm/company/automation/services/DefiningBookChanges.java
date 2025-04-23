@@ -41,6 +41,7 @@ public class DefiningBookChanges {
     return bookSheetsNames2.stream()
         .filter(e -> !bookSheetsNames1.contains(e))
         .filter(e -> !e.contains("Лист"))
+        .filter(e -> !e.contains("Аркуш"))
         .collect(Collectors.toList());
   }
 
