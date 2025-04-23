@@ -83,6 +83,7 @@ public class App {
 
   private static void scanningWithMacros(GraphScanner gs, LocalDateTime endTime, String graphName) {
     while (currentTime.isBefore(endTime)) {
+      log.info("heart beat ...");
       gs.scanButtonPress(graphName);
       update(getIntervalTime());
     }
