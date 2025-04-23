@@ -51,7 +51,7 @@ public class App {
    * Встановлює час сканування книги з config файлу, або через інтервал в секундах, що зазначений у
    * методі
    *
-   * @return
+   * @return - повертає інтервал сканування в секундах
    */
   private static int getIntervalTime() {
     try {
@@ -62,9 +62,9 @@ public class App {
   }
 
   /**
-   * Встановлює час завершення програми або з config файлу, або до зазначеного часу поточного дня
+   * Встановлює час завершення програми з config файлу, або за замовчуванням - до 20:00
    *
-   * @return
+   * @return - LocalDateTime з датою і часом завершення програми
    */
   private static LocalDateTime getEndTime() {
     try {
@@ -81,11 +81,12 @@ public class App {
   }
 
   /**
-   * Встановлює і повертає поточну дату з відповідним часом (години і хвилини)
+   * Встановлює і повертає поточну дату з відповідним часом (години та хвилини)
    *
-   * @param hour
-   * @param minutes
-   * @return
+   * @param hour    - години до яких працюватиме програма за замовчуванням
+   * @param minutes - хвилини, які в комбінації з годинами визначають час до якого працюватиме
+   *                програма
+   * @return - LocalDateTime з поточною датою і часом
    */
   private static LocalDateTime setTime(int hour, int minutes) {
     return LocalDateTime.of(LocalDateTime.now().toLocalDate(), LocalTime.of(hour, minutes));
