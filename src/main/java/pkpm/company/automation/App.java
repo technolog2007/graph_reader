@@ -40,7 +40,6 @@ public class App {
   }
 
   private static int optionChoice() {
-    LocalDateTime endTime = LocalDateTime.now().plusSeconds(15);
     ExecutorService executor = Executors.newSingleThreadExecutor();
     Scanner scanner = new Scanner(System.in);
     Callable<String> inputTask = () -> {
