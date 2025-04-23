@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -24,15 +25,8 @@ public class GraphScanner {
 
   private BookSnapshot oldSnapshot;
   private BookSnapshot newSnapshot;
-  private final String KEY_1 = "delSheets";
-  private final String KEY_2 = "addSheets";
-
-  public void scanAllTime(String graphName) {
-    File file = new File(graphName);
-    if (file.lastModified() != oldSnapshot.getDate()) {
-      printChanges(graphName);
-    }
-  }
+  private static final String KEY_1 = "delSheets";
+  private static final String KEY_2 = "addSheets";
 
   public void scanButtonPress(String graphName) {
     File file = new File(System.getenv("TRIGGER"));
@@ -62,7 +56,12 @@ public class GraphScanner {
   }
 
   private void printChanges(String graphName) {
-    newSnapshot = new MakeSnapshot(graphName).getBs();
+    try {
+      newSnapshot = new MakeSnapshot(graphName).getBs();
+    } catch (Exception e) {
+      log.error("Snapshot creation failed: {}", e.getMessage());
+      return;
+    }
     definingBookChange(oldSnapshot, newSnapshot);
     oldSnapshot = newSnapshot;
     newSnapshot = null;
@@ -98,19 +97,14 @@ public class GraphScanner {
 
   private void writeAttachBookChanges(List<String> bookChanges) {
     if (bookChanges.size() == 1) {
-      String change = bookChanges.get(0).toLowerCase();
-//      if (!change.contains("лист")) {
-        String message =
-            GraphMessage.INFORM_ADD_FOLDER.getMessage() + "\"" + bookChanges.get(0) + "\"";
-        log.warn(message);
-        MessageWriter.writeLine(message);
-//      }
+      String message =
+          GraphMessage.INFORM_ADD_FOLDER.getMessage() + "\"" + bookChanges.get(0) + "\"";
+      logAndWrite(message);
     }
     if (bookChanges.size() > 1) {
       String message =
           GraphMessage.INFORM_ADD_FOLDERS.getMessage() + createMessageBody(bookChanges);
-      log.warn(message);
-      MessageWriter.writeLine(message);
+      logAndWrite(message);
     }
   }
 
@@ -120,14 +114,12 @@ public class GraphScanner {
     } else if (changes.keySet().size() == 1) {
       for (String sheet : changes.keySet()) {
         String message = GraphMessage.INFORM_ADD_POSITION.getMessage() + "\"" + sheet + "\"";
-        MessageWriter.writeLine(message);
-        log.info(message);
+        logAndWrite(message);
       }
     } else {
       List<String> sheets = new ArrayList<>(changes.keySet());
       String message = GraphMessage.INFORM_ADD_POSITIONS.getMessage() + createMessageBody(sheets);
-      MessageWriter.writeLine(message);
-      log.info(message);
+      logAndWrite(message);
     }
   }
 
@@ -138,15 +130,13 @@ public class GraphScanner {
    * @return - тіло повідомлення
    */
   private String createMessageBody(List<String> sheets) {
-    String result = "\"";
-    for (int i = 0; i < sheets.size(); i++) {
-      if (i < sheets.size() - 1) {
-        result += sheets.get(i) + "\", ";
-      } else {
-        result += "\"" + sheets.get(i) + "\"";
-      }
-    }
-    return result;
+    return sheets.stream()
+        .map(s -> "\"" + s + "\"")
+        .collect(Collectors.joining(", "));
+  }
+
+  private void logAndWrite(String message) {
+    log.warn(message);
+    MessageWriter.writeLine(message);
   }
 }
-

@@ -23,12 +23,16 @@ public class MakeSnapshot {
 
   public MakeSnapshot(String fileName) {
     Path path = copyGraph(fileName);
-    ExelReader.read(path.toString());
-    this.bs.setDate(ExelReader.getFileDate());
-    this.bs.setNumOfSheets(ExelReader.getSheets().size());
-    this.bs.setSheetsNames(getSheetsNames());
-    this.bs.setColumnsOfBook(getColumnsOfBook());
-    ExelReader.deleteTempCopy(path);
+    try {
+      ExelReader.read(path.toString());
+      this.bs.setDate(ExelReader.getFileDate());
+      this.bs.setNumOfSheets(ExelReader.getSheets().size());
+      this.bs.setSheetsNames(getSheetsNames());
+      this.bs.setColumnsOfBook(getColumnsOfBook());
+    } finally {
+      ExelReader.closeWorkbook();
+      ExelReader.deleteCopy(path);
+    }
   }
 
   private Path copyGraph(String fileName){

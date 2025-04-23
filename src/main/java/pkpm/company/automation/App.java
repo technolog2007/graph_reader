@@ -4,13 +4,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
-import java.util.Scanner;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import lombok.extern.slf4j.Slf4j;
 import pkpm.company.automation.services.GraphScanner;
 import pkpm.company.automation.services.MakeSnapshot;
@@ -18,80 +11,32 @@ import pkpm.company.automation.services.MakeSnapshot;
 @Slf4j
 public class App {
 
-  private static LocalDateTime currentTime = LocalDateTime.now();
   private final static String GRAPH_NAME = getGraphName();
 
   public static void main(String[] args) {
-
-    int startNum = optionChoice();
-    GraphScanner gs = createGraphScanner(GRAPH_NAME);
-    if (startNum == 1) {
-      log.info("start 1 scenario");
-      log.info("Start program time is : " + LocalDateTime.now());
-
-      scanningAllTime(gs, getEndTime(), GRAPH_NAME);
-
-      log.info("End program time is : " + LocalDateTime.now());
-    }
-    if (startNum == 2) {
-      log.info("start 2 scenario");
-      scanningWithMacros(gs, getEndTime(), GRAPH_NAME);
-    }
+    log.info("Program started!");
+    GraphScanner gs = createFirstSnapshot(GRAPH_NAME);
+    scanningWithMacros(gs, getEndTime(), GRAPH_NAME);
   }
 
-  private static int optionChoice() {
-    ExecutorService executor = Executors.newSingleThreadExecutor();
-    Scanner scanner = new Scanner(System.in);
-    Callable<String> inputTask = () -> {
-      log.info("Оберіть варіант роботи програми:");
-      log.info("- для постійного сканування введіть \"1\"");
-      log.info("- для сканування із використанням макроса введіть \"2\"");
-      return scanner.nextLine();
-    };
-    Future<String> future = executor.submit(inputTask);
-    String selectedScenario = "2"; // за замовчуванням
+
+  private static GraphScanner createFirstSnapshot(String graphName) {
     try {
-      // Чекаємо максимум 60 секунд
-      String userInput = future.get(20, TimeUnit.SECONDS);
-      if (userInput.equals("1") || userInput.equals("2")) {
-        selectedScenario = userInput;
-      } else {
-        log.info("Некоректний ввід. Виконується сценарій за замовчуванням.");
-      }
-    } catch (TimeoutException e) {
-      log.info("Час вичерпано. Виконується сценарій за замовчуванням.");
+      GraphScanner gs = new GraphScanner();
+      gs.setOldSnapshot(new MakeSnapshot(graphName).getBs());
+      return gs;
     } catch (Exception e) {
-      log.info("Сталася помилка: " + e.getMessage());
-    } finally {
-      executor.shutdownNow();
-    }
-    return Integer.parseInt(selectedScenario);
-  }
-
-  private static GraphScanner createGraphScanner(String graphName) {
-    GraphScanner gs = new GraphScanner();
-    gs.setOldSnapshot(new MakeSnapshot(graphName).getBs());
-    return gs;
-  }
-
-  private static void scanningAllTime(GraphScanner gs, LocalDateTime endTime, String graphName) {
-    while (currentTime.isBefore(endTime)) {
-      gs.scanAllTime(GRAPH_NAME);
-      update(getIntervalTime());
+      log.error("Initial snapshot creation failed: {}", e.getMessage());
+      throw new RuntimeException("Cannot start program without initial snapshot");
     }
   }
 
   private static void scanningWithMacros(GraphScanner gs, LocalDateTime endTime, String graphName) {
-    while (currentTime.isBefore(endTime)) {
-      log.info("heart beat ...");
+    while (LocalDateTime.now().isBefore(endTime)) {
+      log.info("scanning");
       gs.scanButtonPress(graphName);
-      update(getIntervalTime());
+      pause(getIntervalTime());
     }
-  }
-
-  private static void update(long pauseTime) {
-    pause(pauseTime);
-    currentTime = LocalDateTime.now();
   }
 
   private static void pause(long seconds) {
@@ -170,7 +115,9 @@ public class App {
     if (graphName != null) {
       return graphName;
     } else {
-      return "Y:\\Графіки роботи ВТВС\\График выдачи докуметации.xlsx";
+      String defaultName = "Y:\\Графіки роботи ВТВС\\График выдачи докуметации.xlsx";
+      log.warn("GRAPH_NAME not found in env. Using default: {}", defaultName);
+      return defaultName;
     }
   }
 }
