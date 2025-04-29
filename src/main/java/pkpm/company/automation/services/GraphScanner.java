@@ -135,6 +135,12 @@ public class GraphScanner {
         .collect(Collectors.joining(", "));
   }
 
+  /**
+   * Приймає і друкує інформаційне повідомлення в консоль, а також записує його у файл, з якого
+   * буде виконуватись читання ботом
+   *
+   * @param message - сформоване повідомлення, яке буде виводитись в консоль і записуватись в файл
+   */
   private void logAndWrite(String message) {
     log.warn(message);
     MessageWriter.writeLine(message);
