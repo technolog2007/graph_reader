@@ -15,6 +15,8 @@ public class DefiningBookChanges {
 
   BookSnapshot bs1;
   BookSnapshot bs2;
+  private static final String IGNORE_SHEET_NAME1 = "Лист";
+  private static final String IGNORE_SHEET_NAME2 = "Аркуш";
 
   public DefiningBookChanges(BookSnapshot bs1, BookSnapshot bs2) {
     this.bs1 = bs1;
@@ -31,17 +33,31 @@ public class DefiningBookChanges {
         "addSheets", getAddSheets(bs1.getSheetsNames(), bs2.getSheetsNames()));
   }
 
+  /**
+   * Визначає і повертає список видалених назв листів книги
+   *
+   * @param bookSheetsNames1 - перелік назв листів першого знімку книги
+   * @param bookSheetsNames2 - перелік назв листів другого знімку книги
+   * @return - список назв листів книги, що були додані
+   */
   private List<String> getDelSheets(Set<String> bookSheetsNames1, Set<String> bookSheetsNames2) {
     return bookSheetsNames1.stream()
         .filter(e -> !bookSheetsNames2.contains(e))
         .collect(Collectors.toList());
   }
 
+  /**
+   * Визначає і повертає список доданих назв листів книги, крім тих, що ігноруються
+   *
+   * @param bookSheetsNames1 - перелік назв листів першого знімку книги
+   * @param bookSheetsNames2 - перелік назв листів другого знімку книги
+   * @return - список назв листів книги, що були додані
+   */
   private List<String> getAddSheets(Set<String> bookSheetsNames1, Set<String> bookSheetsNames2) {
     return bookSheetsNames2.stream()
         .filter(e -> !bookSheetsNames1.contains(e))
-        .filter(e -> !e.contains("Лист"))
-        .filter(e -> !e.contains("Аркуш"))
+        .filter(e -> !e.contains(IGNORE_SHEET_NAME1))
+        .filter(e -> !e.contains(IGNORE_SHEET_NAME2))
         .collect(Collectors.toList());
   }
 
