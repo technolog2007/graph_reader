@@ -11,14 +11,14 @@ import org.apache.poi.ss.usermodel.Cell;
 import pkpm.company.automation.models.BookSnapshot;
 
 @Slf4j
-public class DefiningBookChanges {
+public class BookChangesSearcher {
 
   BookSnapshot bs1;
   BookSnapshot bs2;
   private static final String IGNORE_SHEET_NAME1 = "Лист";
   private static final String IGNORE_SHEET_NAME2 = "Аркуш";
 
-  public DefiningBookChanges(BookSnapshot bs1, BookSnapshot bs2) {
+  public BookChangesSearcher(BookSnapshot bs1, BookSnapshot bs2) {
     this.bs1 = bs1;
     this.bs2 = bs2;
   }

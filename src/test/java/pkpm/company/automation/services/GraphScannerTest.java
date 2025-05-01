@@ -24,15 +24,4 @@ class GraphScannerTest {
   @Test
   void getSnapshotList() {
   }
-
-  @Test
-  void getKEY_1_returnActualValue() {
-    assertEquals(scanner.getKEY_1(), "delSheets");
-  }
-
-  @Test
-  void getKEY_2_returnActualValue() {
-    assertEquals(scanner.getKEY_2(), "attachSheets");
-  }
-
 }

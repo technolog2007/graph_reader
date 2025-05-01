@@ -23,12 +23,6 @@ public class BookSnapshot {
   public BookSnapshot() {
   }
 
-  public BookSnapshot(int numOfSheets, Set<String> sheetsNames, long date) {
-    this.date = date;
-    this.numOfSheets = numOfSheets;
-    this.sheetsNames = sheetsNames;
-  }
-
   @Override
   public String toString() {
     return "BookSnapshot{" +

@@ -28,13 +28,20 @@ public class GraphScanner {
   private static final String KEY_1 = "delSheets";
   private static final String KEY_2 = "addSheets";
 
+  /**
+   * Determines the presence of a trigger file, and if it exists, searches for and writes changes to
+   * the FILE_NAME file, namely tabs that have been added or removed, tabs that have undergone
+   * changes
+   *
+   * @param graphName - full name of the graphic file
+   */
   public void scanButtonPress(String graphName) {
     File file = new File(System.getenv("TRIGGER"));
     if (file.exists()) {
       try (FileReader fr = new FileReader(file); BufferedReader br = new BufferedReader(fr)) {
         String line = br.readLine();
         if (line != null && line.equals("ready")) {
-          printChanges(graphName);
+          findChanges(graphName);
         }
       } catch (IOException e) {
         log.warn("Problem with file {}", graphName);
@@ -44,6 +51,9 @@ public class GraphScanner {
     }
   }
 
+  /**
+   * Deletes the trigger file
+   */
   private void deleteTrigger() {
     try {
       Path path = Path.of(System.getenv("TRIGGER"));
@@ -55,21 +65,34 @@ public class GraphScanner {
     }
   }
 
-  private void printChanges(String graphName) {
+  /**
+   * Creates the last snapshot from the graph and compares it with the previous one, and outputs the
+   * result to the console and prints it to a file
+   *
+   * @param graphName - graphic file name
+   */
+  private void findChanges(String graphName) {
     try {
       newSnapshot = new MakeSnapshot(graphName).getBs();
     } catch (Exception e) {
       log.error("Snapshot creation failed: {}", e.getMessage());
       return;
     }
-    definingBookChange(oldSnapshot, newSnapshot);
+    definingAndWriteBookChange(oldSnapshot, newSnapshot);
     oldSnapshot = newSnapshot;
     newSnapshot = null;
   }
 
-  private void definingBookChange(BookSnapshot oldSnapshot, BookSnapshot newSnapshot) {
+  /**
+   * Determines what changes were made to the graph and displays the corresponding message to the
+   * console and prints to a file
+   *
+   * @param oldSnapshot - previous snapshot of the graph
+   * @param newSnapshot - next graph snapshot
+   */
+  private void definingAndWriteBookChange(BookSnapshot oldSnapshot, BookSnapshot newSnapshot) {
     if (oldSnapshot != null && newSnapshot != null) {
-      DefiningBookChanges dbc = new DefiningBookChanges(oldSnapshot, newSnapshot);
+      BookChangesSearcher dbc = new BookChangesSearcher(oldSnapshot, newSnapshot);
       Map<String, List<String>> bookChanges = dbc.getBookChanges();
       if (!bookChanges.get(KEY_1).isEmpty()) {
         printDelBookChanges(bookChanges);
@@ -81,6 +104,11 @@ public class GraphScanner {
     }
   }
 
+  /**
+   * Outputs a message to the console about the deleted graph sheets
+   *
+   * @param bookChanges - list of graph changes
+   */
   private void printDelBookChanges(Map<String, List<String>> bookChanges) {
     if (bookChanges.get(KEY_1).size() == 1) {
       String message =
@@ -95,6 +123,11 @@ public class GraphScanner {
     }
   }
 
+  /**
+   * Generates and writes to a file messages about added letters in the graph
+   *
+   * @param bookChanges - list of graph changes
+   */
   private void writeAttachBookChanges(List<String> bookChanges) {
     if (bookChanges.size() == 1) {
       String message =
@@ -108,26 +141,32 @@ public class GraphScanner {
     }
   }
 
-  private void writeSheetsChanges(Map<String, List<Cell>> changes) {
-    if (changes.isEmpty()) {
+  /**
+   * Generates and writes to the file messages regarding added positions on the corresponding chart
+   * pages
+   *
+   * @param bookChanges - list of changes in the graph on the relevant sheets
+   */
+  private void writeSheetsChanges(Map<String, List<Cell>> bookChanges) {
+    if (bookChanges.isEmpty()) {
       log.info(GraphMessage.INFORM_NO_CHANGE.getMessage());
-    } else if (changes.keySet().size() == 1) {
-      for (String sheet : changes.keySet()) {
+    } else if (bookChanges.keySet().size() == 1) {
+      for (String sheet : bookChanges.keySet()) {
         String message = GraphMessage.INFORM_ADD_POSITION.getMessage() + "\"" + sheet + "\"";
         logAndWrite(message);
       }
     } else {
-      List<String> sheets = new ArrayList<>(changes.keySet());
+      List<String> sheets = new ArrayList<>(bookChanges.keySet());
       String message = GraphMessage.INFORM_ADD_POSITIONS.getMessage() + createMessageBody(sheets);
       logAndWrite(message);
     }
   }
 
   /**
-   * Створює, у потрібному форматі, тіло повідомлення зі списка змінених сторінок книги
+   * Creates, in the desired format, the message body from the list of changed pages of the graph
    *
-   * @param sheets - список змінених сторінок книги
-   * @return - тіло повідомлення
+   * @param sheets - list of changed pages in the graph
+   * @return - message body
    */
   private String createMessageBody(List<String> sheets) {
     return sheets.stream()
@@ -136,10 +175,10 @@ public class GraphScanner {
   }
 
   /**
-   * Приймає і друкує інформаційне повідомлення в консоль, а також записує його у файл, з якого
-   * буде виконуватись читання ботом
+   * Receives and prints an informational message to the console, and also writes it to a file from
+   * which the bot will read.
    *
-   * @param message - сформоване повідомлення, яке буде виводитись в консоль і записуватись в файл
+   * @param message - a generated message that will be output to the console and written to a file
    */
   private void logAndWrite(String message) {
     log.warn(message);
