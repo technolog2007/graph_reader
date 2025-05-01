@@ -36,10 +36,10 @@ public class MakeSnapshot {
   }
 
   /**
-   * Копіює файл графіка в тимчасову директорію
+   * Copies the graph file to a temporary directory
    *
-   * @param fileName - повна назва файлу графіка
-   * @return - path копії файла графіка
+   * @param fileName - full name of the graph file
+   * @return - path of the copy of the graphics file
    */
   private Path copyGraph(String fileName){
     Path path = null;
@@ -53,9 +53,9 @@ public class MakeSnapshot {
   }
 
   /**
-   * Повертає список з унікальними назвами сторінок книги
+   * Returns a list with unique page names of a book
    *
-   * @return - список унікальних назв сторінок книги
+   * @return - list of unique book page names
    */
   private Set<String> getSheetsNames() {
     return ExelReader.getSheets().stream()
@@ -64,9 +64,9 @@ public class MakeSnapshot {
   }
 
   /**
-   * Створює список колонок, що включають ячейки, по кожному листу книги
+   * Creates a list of columns, including cells, for each sheet of the workbook.
    *
-   * @return - список колонок, що включають ячейки, для кожного листа книги
+   * @return - a list of columns, including cells, for each sheet of the workbook
    */
   private Map<String, List<List<Cell>>> getColumnsOfBook() {
     return ExelReader.getSheets().stream()
