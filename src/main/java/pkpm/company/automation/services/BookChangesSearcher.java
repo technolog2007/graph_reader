@@ -24,9 +24,9 @@ public class BookChangesSearcher {
   }
 
   /**
-   * Визначає, чи були зміни (додані або видалені) у вкладках книги
+   * Determines whether changes (added or deleted) have been made to the book's tabs
    *
-   * @return - повертає список назв листів, що були додані
+   * @return - returns a list of the names of the letters that have been added
    */
   public Map<String, List<String>> getBookChanges() {
     return Map.of("delSheets", getDelSheets(bs1.getSheetsNames(), bs2.getSheetsNames()),
@@ -34,11 +34,11 @@ public class BookChangesSearcher {
   }
 
   /**
-   * Визначає і повертає список видалених назв листів книги
+   * Defines and returns a list of deleted workbook sheet names
    *
-   * @param bookSheetsNames1 - перелік назв листів першого знімку книги
-   * @param bookSheetsNames2 - перелік назв листів другого знімку книги
-   * @return - список назв листів книги, що були додані
+   * @param bookSheetsNames1 - ist of letter names in the 1-st snapshot of the book
+   * @param bookSheetsNames2 - list of letter names in the 2-nd snapshot of the book
+   * @return - list of book sheet names that have been added
    */
   private List<String> getDelSheets(Set<String> bookSheetsNames1, Set<String> bookSheetsNames2) {
     return bookSheetsNames1.stream()
@@ -47,11 +47,11 @@ public class BookChangesSearcher {
   }
 
   /**
-   * Визначає і повертає список доданих назв листів книги, крім тих, що ігноруються
+   * Defines and returns a list of added book sheet names, excluding those that are ignored.
    *
-   * @param bookSheetsNames1 - перелік назв листів першого знімку книги
-   * @param bookSheetsNames2 - перелік назв листів другого знімку книги
-   * @return - список назв листів книги, що були додані
+   * @param bookSheetsNames1 - list of letter names in the 1-st snapshot of the book
+   * @param bookSheetsNames2 - list of letter names in the 2-nd snapshot of the book
+   * @return - list of book sheet names that have been added
    */
   private List<String> getAddSheets(Set<String> bookSheetsNames1, Set<String> bookSheetsNames2) {
     return bookSheetsNames2.stream()
@@ -62,10 +62,10 @@ public class BookChangesSearcher {
   }
 
   /**
-   * Метод повинен працювати при умові що обидва знімки з книги мають однакові вкладки
+   * The method should work provided that both book snapshots have the same tabs.
    *
-   * @param bs1 - знімок з книги №1
-   * @param bs2 - знімок з книги №2
+   * @param bs1 - snapshot of book #1
+   * @param bs2 - snapshot of book #2
    */
   public Map<String, List<Cell>> getSheetsChanges(BookSnapshot bs1, BookSnapshot bs2) {
     Map<String, List<Cell>> filteredColumns1 = extractSecondColumn(bs1.getColumnsOfBook(),
@@ -77,18 +77,18 @@ public class BookChangesSearcher {
   }
 
   /**
-   * Відсортовує другу колонку по кожному листу книги і повертає список
+   * Sorts the second column by each sheet of the book and returns a list
    *
-   * @param columnsOfBook - список колонок листів книги
-   * @param sheetsName    - список імен листів книги
-   * @return - список книги з 2-ми колонками по кожному листу
+   * @param columnsOfBook - list of book letter columns
+   * @param sheetsName    - list of book letter names
+   * @return - book list with 2 columns for each sheet
    */
   private Map<String, List<Cell>> extractSecondColumn(Map<String, List<List<Cell>>> columnsOfBook,
       Set<String> sheetsName) {
     Map<String, List<Cell>> result = new HashMap<>();
     for (String sheet : sheetsName) {
       List<List<Cell>> columns = columnsOfBook.get(sheet);
-      if (columns != null && columns.size() > 1) { // Перевіряємо, що є хоча б 2 колонки
+      if (columns != null && columns.size() > 1) { // Check that there are at least 2 columns
         List<Cell> filtCol = deleteNullValue(columns.get(1));
         result.put(sheet, filtCol);
       }
@@ -97,10 +97,10 @@ public class BookChangesSearcher {
   }
 
   /**
-   * Видаляє нульові значення з колонки книги
+   * Removes zero values from a book column
    *
-   * @param column - колонка книги
-   * @return - відфільтрована колонка книги, без нульових значень
+   * @param column - book column
+   * @return - filtered book column, no null values
    */
   private List<Cell> deleteNullValue(List<Cell> column) {
     column.removeIf(cell -> cell == null || cell.toString().equals(" "));
@@ -108,13 +108,15 @@ public class BookChangesSearcher {
   }
 
   /**
-   * Знаходить відмінності і повертає список відмінностей по другій колонці між сторінками з
-   * однаковими назвами знімків книги
+   * Finds differences and returns a list of differences in the second column between pages with the
+   * same book snapshot names
    *
-   * @param book1      - список листів знімка книги №1, де є лише 2-га колонка
-   * @param book2      - список листів знімка книги №1, де є лише 2-га колонка
-   * @param sheetsName - список назв листів знімка книги
-   * @return - список листів із відмінностями по 2-й колонці знімків
+   * @param book1      - list of letters of the snapshot of book #1, where there is only the 2nd
+   *                   column
+   * @param book2      - list of letters of the snapshot of book #2, where there is only the 2nd
+   *                   column
+   * @param sheetsName - list of letter names book snapshot
+   * @return - list of letters with differences in the 2nd column of the images
    */
   private Map<String, List<Cell>> findDifferentCells(Map<String, List<Cell>> book1,
       Map<String, List<Cell>> book2, Set<String> sheetsName) {
