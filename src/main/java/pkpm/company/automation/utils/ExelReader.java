@@ -24,6 +24,11 @@ public class ExelReader {
 
   private static final String PATH = System.getenv("TEMPORARY_PATH");
 
+  /**
+   * Reads and saves a Workbook from a file
+   *
+   * @param fileName - book file name
+   */
   public static void read(String fileName) {
     File file = new File(fileName);
     if (!file.canRead()) {
@@ -39,6 +44,9 @@ public class ExelReader {
     }
   }
 
+  /**
+   * Close the book
+   */
   public static void closeWorkbook() {
     if (workbook != null) {
       try {
@@ -50,6 +58,11 @@ public class ExelReader {
     }
   }
 
+  /**
+   * Returns all sheets of the book
+   *
+   * @return - list og book sheets
+   */
   public static List<Sheet> getSheets() {
     List<Sheet> bookSheets = new ArrayList<>();
     if (workbook == null) {
@@ -61,6 +74,13 @@ public class ExelReader {
     return bookSheets;
   }
 
+  /**
+   * Creates a copy from the original file
+   *
+   * @param originalPath - path to the original graph file
+   * @return - path to the graph copy file
+   * @throws IOException - exception input / output
+   */
   public static Path createTempCopy(Path originalPath) throws IOException {
     Path tempFile = Files.createTempFile(Path.of(PATH), "copy_", ".xlsx");
     log.info("Temporary copy created successfully: {}", tempFile);
@@ -72,6 +92,11 @@ public class ExelReader {
     return tempFile;
   }
 
+  /**
+   * Deletes a temporary copy of the file
+   *
+   * @param path - path to the graph copy file
+   */
   public static void deleteCopy(Path path) {
     try {
       Files.delete(path);
