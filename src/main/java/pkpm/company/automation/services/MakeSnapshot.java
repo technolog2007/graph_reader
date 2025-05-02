@@ -41,7 +41,7 @@ public class MakeSnapshot {
    * @param fileName - full name of the graph file
    * @return - path of the copy of the graphics file
    */
-  private Path copyGraph(String fileName){
+  private Path copyGraph(String fileName) {
     Path path = null;
     try {
       path = ExelReader.createTempCopy(Path.of(fileName));

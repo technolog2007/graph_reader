@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
 import lombok.extern.slf4j.Slf4j;
+import pkpm.company.automation.services.GraphExecutionReport;
 import pkpm.company.automation.services.GraphScanner;
 import pkpm.company.automation.services.MakeSnapshot;
 
@@ -16,6 +17,8 @@ public class App {
   public static void main(String[] args) {
     log.info("Program started!");
     GraphScanner gs = createFirstSnapshot(GRAPH_NAME);
+    GraphExecutionReport executionReport = new GraphExecutionReport();
+    executionReport.printResult(executionReport.getDate(gs.getOldSnapshot()));
     scanningWithMacros(gs, getEndTime(), GRAPH_NAME);
   }
 
