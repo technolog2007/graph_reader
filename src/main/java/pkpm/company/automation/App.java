@@ -13,12 +13,14 @@ import pkpm.company.automation.services.MakeSnapshot;
 public class App {
 
   private final static String GRAPH_NAME = getGraphName();
+  private final static String FILE_REPORT = "report.txt";
 
   public static void main(String[] args) {
     log.info("Program started!");
     GraphScanner gs = createFirstSnapshot(GRAPH_NAME);
     GraphExecutionReport executionReport = new GraphExecutionReport();
     executionReport.printResult(executionReport.getDate(gs.getOldSnapshot()));
+    executionReport.writeResultsToFile(FILE_REPORT, executionReport.getDate(gs.getOldSnapshot()));
     scanningWithMacros(gs, getEndTime(), GRAPH_NAME);
   }
 

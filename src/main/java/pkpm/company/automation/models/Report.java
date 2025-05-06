@@ -1,23 +1,26 @@
 package pkpm.company.automation.models;
 
+import lombok.Getter;
+
+@Getter
 public class Report {
 
   private final String sheetName;
-  private final int numOfPositions, numOfTasks, numOfCompleted, numOfUncompleted;
+  private final int numOfTasks, numOfNames, numOfCompleted, numOfUncompleted;
 
-  public Report(String sheetName, int numOfTasks, int numOfPositions, int numOfCompleted,
-      int numOfUncompleted
+  public Report(String sheetName, int numOfNames, int numOfTasks, int numOfUncompleted,
+      int numOfCompleted
   ) {
     this.sheetName = sheetName;
+    this.numOfNames = numOfNames;
     this.numOfTasks = numOfTasks;
-    this.numOfPositions = numOfPositions;
-    this.numOfCompleted = numOfCompleted;
     this.numOfUncompleted = numOfUncompleted;
+    this.numOfCompleted = numOfCompleted;
   }
 
   @Override
   public String toString() {
-    return "| " + sheetName + " | " + numOfTasks + " | " + numOfPositions + " | " + numOfCompleted
-        + " | " + numOfUncompleted + " |";
+    return "|" + sheetName + "| " + numOfNames + " | " + numOfTasks + " | " + numOfUncompleted
+        + " | " + numOfCompleted + " |";
   }
 }

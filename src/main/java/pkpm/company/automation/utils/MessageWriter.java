@@ -8,8 +8,8 @@ public class MessageWriter {
 
   private static final String FILE_NAME = getFileName();
 
-  public static void writeList(List<String> messages) {
-    try (FileWriter fw = new FileWriter(FILE_NAME, true)) {
+  public static void writeList(String fileName, List<String> messages) {
+    try (FileWriter fw = new FileWriter(fileName, true)) {
       for (String mes : messages) {
         fw.write(mes + "\n");
       }
