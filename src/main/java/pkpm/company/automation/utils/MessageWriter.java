@@ -9,7 +9,7 @@ public class MessageWriter {
   private static final String FILE_NAME = getFileName();
 
   public static void writeList(String fileName, List<String> messages) {
-    try (FileWriter fw = new FileWriter(fileName, true)) {
+    try (FileWriter fw = new FileWriter(fileName, false)) {
       for (String mes : messages) {
         fw.write(mes + "\n");
       }
