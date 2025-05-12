@@ -185,17 +185,4 @@ public class GraphScanner {
     log.warn(message);
     MessageWriter.writeLine(message);
   }
-
-  public void createGeneralReport(String graphName){
-    try {
-      newSnapshot = new MakeSnapshot(graphName).getBs();
-    } catch (Exception e) {
-      log.error("Snapshot creation failed: {}", e.getMessage());
-      return;
-    }
-    GraphExecutionReport executionReport = new GraphExecutionReport();
-    executionReport.writeResultsToFile(FILE_REPORT_GENERAL, executionReport.getDate(newSnapshot));
-    log.warn("File General report.txt was write!");
-    newSnapshot = null;
-  }
 }

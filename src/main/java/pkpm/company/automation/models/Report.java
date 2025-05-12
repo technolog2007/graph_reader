@@ -18,9 +18,18 @@ public class Report {
     this.numOfCompleted = numOfCompleted;
   }
 
+  private String formatToString(int v) {
+    return String.format("%-" + 3 + "s", v);
+  }
+
   @Override
   public String toString() {
-    return "|" + sheetName + "| " + numOfNames + " | " + numOfTasks + " | " + numOfUncompleted
-        + " | " + numOfCompleted + " |";
+    String sheetName = String.format("%-" + 13 + "s", this.sheetName);
+    return "|" + sheetName
+        + "|" + formatToString(numOfNames)
+        + "|" + formatToString(numOfTasks)
+        + "|" + formatToString(numOfUncompleted)
+        + "|" + formatToString(numOfCompleted)
+        + "|";
   }
 }

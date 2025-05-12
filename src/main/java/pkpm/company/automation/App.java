@@ -13,8 +13,6 @@ import pkpm.company.automation.services.MakeSnapshot;
 public class App {
 
   private final static String GRAPH_NAME = getGraphName();
-  private final static String FILE_REPORT_GENERAL = "report.txt";
-
   public static void main(String[] args) {
     log.info("Program started!");
     GraphScanner gs = createFirstSnapshot(GRAPH_NAME);
@@ -34,9 +32,6 @@ public class App {
   }
 
   private static void scanningWithMacros(GraphScanner gs, LocalDateTime endTime, String graphName) {
-    GraphExecutionReport executionReport = new GraphExecutionReport();
-    executionReport.writeResultsToFile(FILE_REPORT_GENERAL,
-        executionReport.getDate(gs.getOldSnapshot()));
     while (LocalDateTime.now().isBefore(endTime)) {
       log.info("scanning");
       gs.scanButtonPress(graphName);
@@ -115,7 +110,7 @@ public class App {
    *
    * @return - повне ім'я файлу з графіком
    */
-  private static String getGraphName() {
+  public static String getGraphName() {
     String graphName = System.getenv("GRAPH_NAME");
     log.info("graph_file is : {}", graphName);
     if (graphName != null) {

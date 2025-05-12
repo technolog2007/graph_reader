@@ -1,5 +1,7 @@
 package pkpm.company.automation.services;
 
+import java.text.Collator;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +15,13 @@ import pkpm.company.automation.utils.MessageWriter;
 @Slf4j
 public class GraphExecutionReport {
 
-  public List<Report> getDate(BookSnapshot bs) {
+  /**
+   * Формує дані для звіту по кожній сторінці книги через Report
+   *
+   * @param bs - останній знімок книги
+   * @return - список Report з останнього знімку книги
+   */
+  public List<Report> getDateForGeneralReport(BookSnapshot bs) {
     Map<String, List<List<Cell>>> columnsOfBook = bs.getColumnsOfBook();
     return columnsOfBook.keySet().stream()
         .filter(key -> columnsOfBook.get(key).size() > 10 && columnsOfBook.get(key).get(9) != null
@@ -27,6 +35,10 @@ public class GraphExecutionReport {
             getNumOfPosition(getNumOfCompleted(columnsOfBook.get(key)),
                 getNumOfUncompleted(columnsOfBook.get(key)))))
         .collect(Collectors.toList());
+  }
+
+  public void getDateForEmployeeReport(){
+    // тут повинен бути код, який буде формувати дані для звіту по співробітниках
   }
 
   private int getNumOfNames(List<List<Cell>> sheet) {
@@ -57,8 +69,16 @@ public class GraphExecutionReport {
 
   public void writeResultsToFile(String fileName, List<Report> results) {
     List<String> resultsLines = results.stream()
+        .sorted(Comparator.comparing(Report::getNumOfUncompleted))
         .map(Report::toString)
         .collect(Collectors.toList());
     MessageWriter.writeList(fileName, resultsLines);
+  }
+
+  public String writeResultToString(List<Report> results) {
+    return results.stream()
+        .sorted(Comparator.comparing(Report::getNumOfUncompleted))
+        .map(Report::toString)
+        .collect(Collectors.joining("\n"));
   }
 }

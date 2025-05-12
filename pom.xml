@@ -4,7 +4,7 @@
 
   <groupId>pkpm.company.automation</groupId>
   <artifactId>graph_reader</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.4</version>
   <packaging>jar</packaging>
 
   <name>graph_reader</name>
@@ -45,7 +45,7 @@
     <dependency>
       <groupId>org.apache.poi</groupId>
       <artifactId>poi-ooxml</artifactId>
-      <version>5.2.3</version> <!-- Перевірте актуальну версію -->
+      <version>5.2.3</version>
     </dependency>
     <!-- Додаткові залежності для роботи зі стрімами -->
     <dependency>
@@ -162,6 +162,8 @@
             <filtering>true</filtering>
             <excludes>
               <exclude>**/app.properties</exclude>
+              <exclude>**/task.txt</exclude>
+              <exclude>**/Використання черги повідомлень.txt</exclude>
             </excludes>
           </resource>
         </resources>
