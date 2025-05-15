@@ -173,5 +173,10 @@ public class GraphExecutionReport {
         .collect(Collectors.joining("\n"));
   }
 
-
+  public String writeResulForReportEmployeetToString(List<ReportEmployee> results){
+    return results.stream()
+        .sorted(Comparator.comparing(ReportEmployee::getUncompleted))
+        .map(ReportEmployee::toString)
+        .collect(Collectors.joining("\n"));
+  }
 }
